@@ -1,6 +1,6 @@
 # Lab5
 
-## Objective
+## Goal
 
 Use a `race condition` to obtain specific content from the server.
 The method to trigger the `race condition` is by sending data to the server.

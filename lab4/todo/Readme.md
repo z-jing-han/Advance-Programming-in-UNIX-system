@@ -1,6 +1,6 @@
 # Lab4
 
-## Objective
+## Goal
 
 The goal is to complete `libmin64-ex.asm`, which is just for practicing assembly language.
 The entire `chal/` folder is provided by the TA. Inside it, there is a symbolic link pointing to the outer `libmin64-ex.asm`, so you can directly edit it from outside and then test it inside the `chal/` directory.

@@ -1,7 +1,6 @@
 # Lab1 docker & pwntool
 
-
-## Objective
+## Goal
 
 What this lab is about:
 1. Set up the environment

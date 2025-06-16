@@ -1,6 +1,6 @@
 # Lab 3 Gotoku
 
-## Objective
+## Goal
 
 1. Shared Library
 2. Overwrite GOT Entry, simply put: replacing the function in the original library with your own custom shared library.
@@ -24,7 +24,7 @@ Otherwise the file won’t be found during execution. For future labs too, if yo
 :::
 
 1. How to compile a program into a library? How to use a library you compiled?
-    Below is the `makefile` from the `dummy` folder:
+    Below is the `makefile` from the `dummy/` folder:
     ```makefile=
     CC = gcc
     CFLAGS = -Wall -g -fPIC
@@ -85,7 +85,7 @@ Otherwise the file won’t be found during execution. For future labs too, if yo
 2. What to write in the shared object (`.so`, i.e., library)?
     1. First, look at `libgotoku_dummy.c` in the dummy folder. That’s the original library. Your goal is to replace this.
     2. Before replacing it, you can reuse stuff inside. You can use `dlsym()` to fetch the original library's symbols and reuse its functions.
-    3. For part 2-A (10%), the requirement is just to solve the Sudoku — no additional limitations. The approach in `local_lib_modify_gop` folder is simply to modify the content of `gop_1()`
+    3. For part 2-A (10%), the requirement is just to solve the Sudoku — no additional limitations. The approach in `local_lib_modify_gop/` folder is simply to modify the content of `gop_1()`
         3-1. Use `lib_constructor` to find the original symbols (step 2)
         3-2. `game_init`
         3-3. `game_load` and solve the Sudoku using DFS
@@ -97,7 +97,7 @@ Otherwise the file won’t be found during execution. For future labs too, if yo
     # Set two environment variables: first is which .so to load, second is library path, third is the executable
     ```
     
-3. What about 2-B (10%)? Folder: `local_lib`
+3. What about 2-B (10%)? Folder: `local_lib/`
     There are more restrictions now. But actually, my 2-A only violated this rule:
     >> Your solver an only call the `gop_*` functions to walk in the puzzle, or modify the GOT table
     In other words, you're not allowed to modify gop_*, but in 2-A I did change gop_1.
@@ -107,7 +107,7 @@ Otherwise the file won’t be found during execution. For future labs too, if yo
     
     Then during `game_load`, you simply replace the function addresses in the GOT table with the functions you want to use (fill the action function pointers). The logic is similar to the previous step's `gop_1`, but instead of calling a function directly, now you're overwriting an address.
     
-4. And what about the remote part (6. 30%)? Folder:`remote`
+4. And what about the remote part (6. 30%)? Folder:`remote/`
     What you do is compile your own library and send it to the server, and the server links your library and runs it.
     
     However, you won't know the `gop_*` addresses on the `server` in advance. But the TA provides the actual binary that the server is executing, so you can extract the `gop_*` addresses from that — just hardcode those addresses into your program and send it.

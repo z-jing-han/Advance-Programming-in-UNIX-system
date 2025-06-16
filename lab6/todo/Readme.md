@@ -1,6 +1,6 @@
 # lab6
 
-## 目標
+## Goal
 
 Very similar to lab5 — the goal is still to extract data from the server that’s not accessible under normal circumstances. But while lab5 uses a **race condition**, this one uses **buffer overflow**.
 

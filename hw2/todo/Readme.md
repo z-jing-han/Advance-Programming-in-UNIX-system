@@ -1,6 +1,6 @@
 # Homework 2
 
-## Objective
+## Goal
 
 Practice the `ptrace` syscall by designing an instruction-level debugger.
 
@@ -110,7 +110,7 @@ This way, you can align with memory segments and ensure you're in a writable are
 If `ptrace(PEEK_TEXT, addr)` fails, `return (unsign char)0`, then check with `error`.
 If successful, return the original byte.
 
-### DEMO問題
+### About DEMO
 
 Most of the points are already covered above.
 The only remaining issue: how to handle dynamically linked programs (public example 1–2)
@@ -119,7 +119,7 @@ The TA found it strange that it worked without extra handling, but they let me p
 After thinking about it later, I believe the reason is that `autodbg.cpp` uses `ptrace(TRACE_ME)` in the child process.
 So tracing only starts after the program is already running? That way, when I read `mmap`, I get the actual memory?
 
-### 某個失敗的流程
+### A failed control flow
 ```
 Hit a breakpoint  
 Immediately recover  

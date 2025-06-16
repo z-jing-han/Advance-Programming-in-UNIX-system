@@ -7,7 +7,7 @@ It's relatively complex, so there’s a pre-lab practice beforehand, which is ba
 
 ||It’s complicated—I didn’t really understand it either||
 
-## Objective
+## Goal
 
 The kernel module includes:
 

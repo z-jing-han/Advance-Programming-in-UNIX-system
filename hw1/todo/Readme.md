@@ -1,12 +1,10 @@
 # Homework 1
 
-## Objective
+## Goal
 
 Looks like this is a brand new assignment created by the current TA.
 
 Hmm, the explanation alone took over an hour—it's best to record both video and audio to really understand what the assignment is about.
-
-Also, this time the assignment seems to have triggered the most active discussion in the Discord group. Sometimes the TA posts hints or announcements there that aren’t updated in the spec. If I find anything important, I’ll put it here.
 
 Essentially, this is about implementing the ***zopline*** paper. The core concept is to replace `syscall` with `call rax` in order to modify the behavior of syscall. In this assignment, that modification is mostly to implement a logger.
 
