@@ -349,7 +349,7 @@ void __hook_init(const syscall_hook_fn_t trigger_syscall,
 ```
 
 > ⚠️ **Warning:**
-> :::warning
+>
 > The **init library** is responsible for ensuring proper stack alignment before invoking the function pointer stored in `hooked_syscall`.
 >
 > According to the x86-64 ABI, the stack must be aligned to a **16-byte boundary**.
@@ -651,21 +651,21 @@ Hello, world!
 
 You should start the server first, and then type some random text manually on the **client** side.
 
-:::info
-We use **OpenBSD netcat** for this testcase.
-
-On Debian-based Linux distributions, you can install it using:
-
-```sh
-apt install netcat-openbsd
-```
-
-On Red Hat-based Linux distributions, use:
-
-```sh
-dnf install netcat
-```
-:::
+> 💡 **Info:**
+> 
+> We use **OpenBSD netcat** for this testcase.
+>
+> On Debian-based Linux distributions, you can install it using:
+>
+> ```sh
+> apt install netcat-openbsd
+> ```
+> 
+> On Red Hat-based Linux distributions, use:
+> 
+> ```sh
+> dnf install netcat
+> ```
 
 
 ### Server

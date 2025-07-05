@@ -25,9 +25,9 @@ $ ./sdb [program]
 
 ## Commands Requirements
 
-:::info
-We will not test any error handling not mentioned in this spec. You can determine how to handle the other errors by yourself.
-:::
+> 💡 **Info:**
+> 
+> We will not test any error handling not mentioned in this spec. You can determine how to handle the other errors by yourself.
 
 ### Load Program
 
@@ -74,15 +74,15 @@ We will not test any error handling not mentioned in this spec. You can determin
 (sdb)
 ```
 
-:::info
-**Note:**
-- For dynamic linked ELF (e.g. `hola`), you need to stop on the entry point of the **target binary**, not the dynamic linker's entry point. (You can set a breakpoint at the entrypoint after first stop, and continue the execution.)
-- Due to `hola` also has PIE enabled, the address will differ each time you run the program, but the instructions you got should remain the same.
-- You can verify the entry point offset by running:
-      `readelf -h ./hola | grep Entry`
-    - If `readelf` is not available, install the `binutils` package for your Linux distribution first.
-    - For your convenience, the offset of the entry point of `hola` is `0x1080`
-:::
+> 💡 **Info:**
+> 
+> **Note:**
+> - For dynamic linked ELF (e.g. `hola`), you need to stop on the entry point of the **target binary**, not the dynamic linker's entry point. (You can set a breakpoint at the entrypoint after first stop, and continue the execution.)
+> - Due to `hola` also has PIE enabled, the address will differ each time you run the program, but the instructions you got should remain the same.
+> - You can verify the entry point offset by running:
+>       `readelf -h ./hola | grep Entry`
+>     - If `readelf` is not available, install the `binutils` package for your Linux distribution first.
+>     - For your convenience, the offset of the entry point of `hola` is `0x1080`
 
 ### Disassemble
 
@@ -112,18 +112,18 @@ Sample output (assume only addresses from `0x401000` to `0x402000` are executabl
 ** the address is out of the range of the executable region.
 ```
 
-:::info
-**Note:**
-- You should only disassemble the program when the program is loaded or when using `si`, `cont` and `syscall` commands.
-- If the `break` command **sets a breakpoint** using patched instructions like `0xcc` (int3), it should not appear in the output.
-- If the `patch` command is used in the executable region, the disassembled code should be the patched value, see the [patch](#Patch-Memory) section for examples.
-:::
+> 💡 **Info:**
+> 
+> **Note:**
+> - You should only disassemble the program when the program is loaded or when using `si`, `cont` and `syscall` commands.
+> - If the `break` command **sets a breakpoint** using patched instructions like `0xcc` (int3), it should not appear in the output.
+> - If the `patch` command is used in the executable region, the disassembled code should be the patched value, see the [patch](#Patch-Memory) section for examples.
 
-:::info
-**Hint:** You can link against the `capstone` library for disassembling.
-
-Note that the disassembly output of capstone v5 and v4 might be different, just make sure they have the same meaning. (e.g. `mov rcx, 0xffffffffffffffb8` vs `mov rcx, -0x48`).
-:::
+> 💡 **Info:**
+> 
+> **Hint:** You can link against the `capstone` library for disassembling.
+> 
+> Note that the disassembly output of capstone v5 and v4 might be different, just make sure they have the same meaning. (e.g. `mov rcx, 0xffffffffffffffb8` vs `mov rcx, -0x48`).
 
 ### Step Instruction
 
@@ -183,9 +183,9 @@ hello world!
 ** the target program terminated.
 ```
 
-:::info
-**Note:** If your implementation of `cont` requires the use of `PTRACE_SINGLE_STEP` and `int3`, you can only utilize a maximum of **two ptrace (PTRACE_SINGLE_STEP) and two int3** in the implementation of `cont`, or you will receive 0 points.
-:::
+> 💡 **Info:**
+> 
+> **Note:** If your implementation of `cont` requires the use of `PTRACE_SINGLE_STEP` and `int3`, you can only utilize a maximum of **two ptrace (PTRACE_SINGLE_STEP) and two int3** in the implementation of `cont`, or you will receive 0 points.
 
 ### Info Registers
 
@@ -240,10 +240,10 @@ $r15 0x0000000000000000    $rip 0x0000000000401030    $eflags 0x0000000000000202
       401017: bf 01 00 00 00                    mov       edi, 1
       40101c: e8 0a 00 00 00                    call      0x40102b
 ```
-:::info
-**Note:** If you set a breakpoint at the address that current `$rip` points to, you should just go on next address after typing `si`, `cont` or `syscall` and **do not** output `** hit a breakpoint at [hex address].`
-This means that the program will not stop at the address that current `$rip` points to if you set a breakpoint on it.
-:::
+> 💡 **Info:**
+> 
+> **Note:** If you set a breakpoint at the address that current `$rip` points to, you should just go on next address after typing `si`, `cont` or `syscall` and **do not** output `** hit a breakpoint at [hex address].`
+> This means that the program will not stop at the address that current `$rip` points to if you set a breakpoint on it.
 
 #### Break at **Offset of Target Binary**
 
@@ -338,10 +338,10 @@ Num     Address
     - If the patch address and the size of the hex string is valid, output `** patch memory at [hex address].`
     - If `[hex address]` is not a valid address or `[hex address] + sizeof([hex string])` is not a valid address, output `** the target address is not valid.`.
 
-:::info
-**Note:**
--  If you patch on an instruction that has been set as a breakpoint, the breakpoint should still exist, but the original instruction should be patched.
-:::
+> 💡 **Info:**
+> 
+> **Note:**
+> -  If you patch on an instruction that has been set as a breakpoint, the breakpoint should still exist, but the original instruction should be patched.
     
 - Sample output:
 ```
@@ -371,9 +371,9 @@ Num     Address
     - If it enters a syscall, output `** enter a syscall([nr]) at [hex address].`
     - If it leaves a syscall, output `** leave a syscall([nr]) = [ret] at [hex address].`
 
-:::info
-**Note:** You can ignore the cases where a breakpoint is set on a syscall instruction.
-:::
+> 💡 **Info:**
+> 
+> **Note:** You can ignore the cases where a breakpoint is set on a syscall instruction.
 
 - Sample output:
 ```
@@ -480,12 +480,12 @@ hola mundo!
 ** the target program terminated.
 ```
 
-:::info
-**Note:**
-- The output of the addresses should be different, just make sure the offset of the entrypoint and the instructions are the same.
-- We used [`patchelf`](https://github.com/NixOS/patchelf) to link `hola` with `libc.so.6` and `ld-linux-x86-64.so.2` located in the same directory. Therefore, you need to `cd` into the directory containing `hola` to run the program properly.
-    - For example: `(cd ./hw2_testing_program; ../sdb ./hola)`
-:::
+> 💡 **Info:**
+> 
+> **Note:**
+> - The output of the addresses should be different, just make sure the offset of the entrypoint and the instructions are the same.
+> - We used [`patchelf`](https://github.com/NixOS/patchelf) to link `hola` with `libc.so.6` and `ld-linux-x86-64.so.2` located in the same directory. Therefore, you need to `cd` into the directory containing `hola` to run the program properly.
+>     - For example: `(cd ./hw2_testing_program; ../sdb ./hola)`
 
 ### Example 2 (10%)
 - Requirements: `break` `breakrva` `info break` `info reg`
@@ -548,9 +548,9 @@ $r15 0x0000000000000001    $rip 0x00000000004017e6    $eflags 0x0000000000000246
 hello world!
 ** the target program terminated.
 ```
-:::info
-**Note:** Make sure that `$rbp - $rsp` equals to `0x20`.
-:::
+> 💡 **Info:**
+> 
+> **Note:** Make sure that `$rbp - $rsp` equals to `0x20`.
 
 
 ### Example 3 (10%)
@@ -680,9 +680,9 @@ hello world!
 ** the target program terminated.
 ```
 
-:::info
-The disassembly output of capstone v5 and v4 might be different, just make sure they have the same meaning. (e.g. `mov rcx, 0xffffffffffffffb8` vs `mov rcx, -0x48`).
-:::
+> 💡 **Info:**
+> 
+> The disassembly output of capstone v5 and v4 might be different, just make sure they have the same meaning. (e.g. `mov rcx, 0xffffffffffffffb8` vs `mov rcx, -0x48`).
 
 ### Extra Example (0%)
 - Launch debugger: `./sdb ./anon`
@@ -752,9 +752,9 @@ Welcome to ANON TOKYO!
 
 ** the target program terminated.
 ```
-:::info
-The example is just for you to test disassembling instructions when current program counter is near the boundary of executable region.
-:::
+> 💡 **Info:**
+> 
+> The example is just for you to test disassembling instructions when current program counter is near the boundary of executable region.
 
 ## Hints
 
@@ -785,9 +785,9 @@ The example is just for you to test disassembling instructions when current prog
 
 - [60%] We use `N` hidden test cases to evaluate your implementation. You get `60/N` points for each correct test case.
 
-:::danger
-Plagiarism is not allowed. Any student who is caught plagiarizing will receive a zero. 🫵
-:::
+> ❗ **Danger:**
+> 
+> Plagiarism is not allowed. Any student who is caught plagiarizing will receive a zero. 🫵
 
 ## Demo
 - Date: 2025-06-02
@@ -798,40 +798,40 @@ Plagiarism is not allowed. Any student who is caught plagiarizing will receive a
 
 Download link: [hw2_demo_program.zip]
 
-:::info
-Tips:
-
-You can `ln -s /path/to/your/sdb sdb` inside your `hw2_demo_program`.
-
-e.g.:
-
-```shell
-$ curl -sSfLO https://up.zoolab.org/unixprog/hw02/hw2_demo_program.zip
-$ unzip hw2_demo_program.zip
-Archive:  hw2_demo_program.zip
-   creating: hw2_demo_program/
-  inflating: hw2_demo_program/anon
-  inflating: hw2_demo_program/hello
-  inflating: hw2_demo_program/hola
-  inflating: hw2_demo_program/ld-linux-x86-64.so.2
-  inflating: hw2_demo_program/libc.so.6
-  inflating: hw2_demo_program/mortis
-  inflating: hw2_demo_program/rana
-  inflating: hw2_demo_program/soyorin
-$ ln -s ../../zig-out/bin/sdb hw2_demo_program/sdb
-$ ls -al hw2_demo_program
-total 5.6M
--rwxr-xr-x 1 501 dialout 801K Jun  1 10:45 anon
--rwxr-xr-x 1 501 dialout 801K Jun  1 10:45 hello
--rwxr-xr-x 1 501 dialout  21K Jun  1 10:45 hola
--rwxr-xr-x 1 501 dialout 236K Jun  1 10:45 ld-linux-x86-64.so.2
--rwxr-xr-x 1 501 dialout 2.2M Jun  1 10:45 libc.so.6
--rwxr-xr-x 1 501 dialout  23K Jun  1 10:45 mortis
--rwxr-xr-x 1 501 dialout 801K Jun  1 10:45 rana
-lrwxr-xr-x 1 501 dialout   21 Jun  1 10:51 sdb -> ../../zig-out/bin/sdb
--rwxr-xr-x 1 501 dialout 845K Jun  1 10:45 soyorin
-```
-:::
+> 💡 **Info:**
+> 
+> Tips:
+> 
+> You can `ln -s /path/to/your/sdb sdb` inside your `hw2_demo_program`.
+> 
+> e.g.:
+> 
+> ```shell
+> $ curl -sSfLO https://up.zoolab.org/unixprog/hw02/hw2_demo_program.zip
+> $ unzip hw2_demo_program.zip
+> Archive:  hw2_demo_program.zip
+>    creating: hw2_demo_program/
+>   inflating: hw2_demo_program/anon
+>   inflating: hw2_demo_program/hello
+>   inflating: hw2_demo_program/hola
+>   inflating: hw2_demo_program/ld-linux-x86-64.so.2
+>   inflating: hw2_demo_program/libc.so.6
+>   inflating: hw2_demo_program/mortis
+>   inflating: hw2_demo_program/rana
+>   inflating: hw2_demo_program/soyorin
+> $ ln -s ../../zig-out/bin/sdb hw2_demo_program/sdb
+> $ ls -al hw2_demo_program
+> total 5.6M
+> -rwxr-xr-x 1 501 dialout 801K Jun  1 10:45 anon
+> -rwxr-xr-x 1 501 dialout 801K Jun  1 10:45 hello
+> -rwxr-xr-x 1 501 dialout  21K Jun  1 10:45 hola
+> -rwxr-xr-x 1 501 dialout 236K Jun  1 10:45 ld-linux-x86-64.so.2
+> -rwxr-xr-x 1 501 dialout 2.2M Jun  1 10:45 libc.so.6
+> -rwxr-xr-x 1 501 dialout  23K Jun  1 10:45 mortis
+> -rwxr-xr-x 1 501 dialout 801K Jun  1 10:45 rana
+> lrwxr-xr-x 1 501 dialout   21 Jun  1 10:51 sdb -> ../../zig-out/bin/sdb
+> -rwxr-xr-x 1 501 dialout 845K Jun  1 10:45 soyorin
+> ```
 
 ## Hidden Case 1 (15%)
 
@@ -913,9 +913,9 @@ I like cucumbers
 ** the target program terminated.
 ```
     
-:::info
-Please ensure that some registers (e.g. `$r13`) other than `$rip`, `$rsp`, and `$eflags` contain non-zero values in the `info reg` output.
-:::
+> 💡 **Info:**
+> 
+> Please ensure that some registers (e.g. `$r13`) other than `$rip`, `$rsp`, and `$eflags` contain non-zero values in the `info reg` output.
 
 ## Hidden Case 2 (15%)
 
@@ -1022,11 +1022,11 @@ She is my friend
 ** the target program terminated.
 ```
     
-:::info
-Please ensure that all registers, except for `$rip`, `$rsp`, and `$eflags`, are zero in the `info reg` output.
-
-In addition, the addresses in the disassembly output may differ because the tracee is a PIE-enabled binary.
-:::
+> 💡 **Info:**
+> 
+> Please ensure that all registers, except for `$rip`, `$rsp`, and `$eflags`, are zero in the `info reg` output.
+> 
+> In addition, the addresses in the disassembly output may differ because the tracee is a PIE-enabled binary.
 
 ## Hidden Case 3 (15%)
 

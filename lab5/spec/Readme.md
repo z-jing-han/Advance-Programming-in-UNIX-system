@@ -55,9 +55,9 @@ We provide the source code of the challenge server for your reference [view].
 
 
 ## Lab Submission
-:::warning
-You have to upload all your solution scripts and codes to e3. Specifically, grading item #2, #4, and #6.
-:::
+> ⚠️ **Warning:**
+> 
+> You have to upload all your solution scripts and codes to e3. Specifically, grading item #2, #4, and #6.
 
 - Filename: `{studentID}_lab05.zip`
 - Format:

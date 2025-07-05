@@ -63,14 +63,15 @@ The specification of the kernel module is summarized as follows.
         - In **decryption mode**, one block is always withheld until [`CM_IOC_FINALIZE`](#CM_IOC_FINALIZE) is called, as it may contain padding that needs to be processed correctly.
         - See the [`CM_IOC_FINALIZE`](#CM_IOC_FINALIZE) section for more details on padding.
 
-    :::warning
-    It is ***recommended*** to implement mode `BASIC` first before implementing mode `ADV`.
-    :::
-    :::info
-    **2025/03/15 Update**
-    All read/write operations are treated as the entire file, so padding is only processed at the finalization stage. 
-    This is also the reason why decryption requires keeping one block in I/O mode `ADV`.
-    :::
+    > ⚠️ **Warning:**
+    > 
+    > It is ***recommended*** to implement mode `BASIC` first before implementing mode `ADV`.
+    
+    > 💡 **Info:**
+    > 
+    > **2025/03/15 Update**
+    > All read/write operations are treated as the entire file, so padding is only processed at the finalization stage. 
+    > This is also the reason why decryption requires keeping one block in I/O mode `ADV`.
 
 1. The `ioctl` interface. The `ioctl` command supports the following operations. Command definitions can be found in the `cryptomod.h` header file.
     <a id="CM_IOC_SETUP"></a>
@@ -153,21 +154,21 @@ Here are some hints for you.
 1. Please install the qemu system emulator in your development platform. For Ubuntu-based dockers, you can install it using the command `apt install qemu-system-x86`. It would work on both Intel and Apple chips. You can even install the native one on Mac by using `brew install qemu`.
 
 1. Once you have the qemu system emulator, you can simply type `sh ./qemu.sh` to boot the Linux kernel in a virtual machine. The username is `root`. The current design uses the archive `rootfs.cpio.bz2` as the `initramfs` image. You can add more files in the filesystem by extracting files from the archive, adding files your want, and re-packing the archive.
-    :::warning
-    You can use `poweroff` command or simply press `Ctrl-A X` to exit QEMU.
-    :::
+    > ⚠️ **Warning:**
+    > 
+    > You can use `poweroff` command or simply press `Ctrl-A X` to exit QEMU.
 
 1. If you plan to have your files in the `initramfs` image, you can extract the files using [bzip2(1)](https://linux.die.net/man/1/bzip2) and [cpio(1)](https://linux.die.net/man/1/cpio) utilities, and re-pack the image using the same tools.
 
-   :::warning
-   You may need to set the cpio format to `newc` format. Also please ensure that you pack all the required files in the image.
-   :::
+   > ⚠️ **Warning:**
+   > 
+   > You may need to set the cpio format to `newc` format. Also please ensure that you pack all the required files in the image.
 
 1. A sample `hello, world!` module is available [here (hellomod.tbz)] You may implement your module based on the `hello, world!` example. It has sample file operations and `/proc` file system implementations.
 
-   :::info
-   In the `qemu` virtual machine runtime, you can use the commands `insmod` and `rmmod` to install and remove modules, respectively. Use `lsmod` to inspect what modules have been loaded.
-   :::
+   > 💡 **Info:**
+   > 
+   > In the `qemu` virtual machine runtime, you can use the commands `insmod` and `rmmod` to install and remove modules, respectively. Use `lsmod` to inspect what modules have been loaded.
 
 1. To copy memory content from the user-space process to the kernel, please use the [`copy_from_user`](https://elixir.bootlin.com/linux/v6.6.17/source/include/linux/uaccess.h#L180) function. To copy memory content from the kernel to the user-space process, please use the [`copy_to_user`](https://elixir.bootlin.com/linux/v6.6.17/source/include/linux/uaccess.h#L188) function.
 
@@ -221,9 +222,9 @@ Here are some hints for you.
 ## Grading
 
 We have many test cases here. You don't have to complete them in order. Just demonstrate what you have completed. Before you run the `test_crypto` testcase program, please ensure its md5 checksum is `a77e4e644ecf204f062106bab6938c38`.
-:::danger
-The last demo time is 3/31 15:10.
-:::
+> ❗ **Danger:**
+> 
+> The last demo time is 3/31 15:10.
 
 1. [10 pts] You can boot the Linux VM in a supported environment.
 

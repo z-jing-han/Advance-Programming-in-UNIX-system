@@ -6,9 +6,9 @@ Date: 2025-03-31
 
 This lab aims to play with `LD_PRELOAD` and GOT table. Your mission is to ask our challenge server to solve the sudoku puzzle, i.e., move from the start position (0, 0) to the empty cells and fill in the correct values.
 
-:::danger
-Please read the [instructions](#Lab-Instructions) carefully before you implement this lab. You may implement the codes to solve the challenge on an Apple chip-based machine, but the files you submit to the challenge server must be compiled for x86_64 architecture.
-:::
+> ❗ **Danger:**
+> 
+> Please read the [instructions](#Lab-Instructions) carefully before you implement this lab. You may implement the codes to solve the challenge on an Apple chip-based machine, but the files you submit to the challenge server must be compiled for x86_64 architecture.
 
 ## The Challenge Server
 
@@ -28,9 +28,9 @@ LD_PRELOAD=/libsolver.so /gotoku
 
 To simplify the uploading process, you can use our provided `pwntools` python script to solve the pow and upload your solver binary executable. The upload script (`submit.py`) is available. You may need to place the `solpow.py` file in the same directory and invoke the script by passing the path of your solver as the first parameter to the submission script.
 
-:::warning
-Please note that for security considerations, the challenge server is run in a chroot'ed environment without the `/proc` filesystem. For getting the GOT entry addresses, please calculate them based on the fixed offset between the `main` function and the involved GOT entries obtained from the `gotoku` executable.
-:::
+> ⚠️ **Warning:**
+> 
+> Please note that for security considerations, the challenge server is run in a chroot'ed environment without the `/proc` filesystem. For getting the GOT entry addresses, please calculate them based on the fixed offset between the `main` function and the involved GOT entries obtained from the `gotoku` executable.
 
 ## Lab Instructions
 
@@ -64,9 +64,9 @@ We provide a number of hints for you to solve the challenge. The directions for 
 
 1. Since the `gop_NNN` functions are all implemented in the shared library, it is feasible that you can hijack the function calls from the `main` function to the `gop_NNN` functions by modifying the GOT table of the corresponding functions. For example, making function calls to `gop_1`, `gop_2`, and `gop_3` can be altered and become calling `gop_down`, `gop_fill_1`, and `gop_show`, respectively.
 
-   :::danger
-   Note: You are not allowed to hijack `gop_*` functions using `LD_PRELOAD` on the challenge server. Please hijack it using the GOT table. 
-   :::
+   > ❗ **Danger:**
+   > 
+   > Note: You are not allowed to hijack `gop_*` functions using `LD_PRELOAD` on the challenge server. Please hijack it using the GOT table. 
 
 1. Locating the *runtime* address of the GOT table in a running process could be tricky. But since we have provided a special function `game_get_ptr`, you can obtain the real address of the `main` function in runtime. We also provide the binary file of the `gotoku` executable. You should be able to find the relative address of the `main` function and each `GOT` table entry from the binary. The relative addresses can be retrieved by `pwntools` using the script.
 
@@ -139,9 +139,9 @@ x86_64-linux-gnu-gcc -o libsolver.so -shared -fPIC libsolver.c
    - Your solver can only call the `gop_*` functions to walk in the puzzle, or modify the GOT table - the same requirement as running on the server.
    -  You cannot print out the `Bingo` message by yourself - the same requirement as running on the server.
 
-:::warning
-The above grading items can be done on your own desktop/laptop. It doesn't matter if you are working on either an Intel or Apple chip-based machine.
-:::
+> ⚠️ **Warning:**
+> 
+> The above grading items can be done on your own desktop/laptop. It doesn't matter if you are working on either an Intel or Apple chip-based machine.
 
 3. [10 pts] You can produce an `x86-64` solver shared object and submit it to our challenge server. The shared object should print out a message `UP113_GOT_PUZZLE_CHALLENGE` on the server.
     - This must be implemented in your solver C codes. You have to upload the compiled shared object to the server.
@@ -161,10 +161,10 @@ The above grading items can be done on your own desktop/laptop. It doesn't matte
    -----END PUBLIC KEY-----
    ```
 
-:::warning
-You have to ensure your working environment has `openssl` installed.
-:::
+> ⚠️ **Warning:**
+> 
+> You have to ensure your working environment has `openssl` installed.
 
-:::danger
-We have an execution time limit for your challenge. You have to solve the challenge within about 90s.
-:::
+> ❗ **Danger:**
+> 
+> We have an execution time limit for your challenge. You have to solve the challenge within about 90s.

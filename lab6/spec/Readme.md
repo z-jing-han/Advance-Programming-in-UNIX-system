@@ -35,9 +35,9 @@ We provide the source code and the binary of the challenge server for your refer
 
 The challenge has an obvious buffer overflow problem in its implementation. Also, note that there is ***no canary*** protection for the vulnerable function.
 
-:::danger
-The reports from `checksec` may report having ***canaries*** in the executable, but don't worry about that.
-:::
+> ❗ **Danger:** 
+> 
+> The reports from `checksec` may report having ***canaries*** in the executable, but don't worry about that.
 
 ## Challenge #3
 
@@ -187,9 +187,9 @@ Here, we provide a sample script for you to run the challenge binaries locally o
 
 # Lab Submission
 
-:::warning
-You have to upload all your solution scripts and codes to e3.
-:::
+> ⚠️ **Warning:**
+> 
+> You have to upload all your solution scripts and codes to e3.
 
 - Filename: `{studentID}_lab06.zip`
 - Format:

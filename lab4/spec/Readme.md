@@ -111,12 +111,12 @@ Here are some hints for you to implement the codes.
 
 No challenge server for this lab. You can simply do everything in your own host.
 
-:::warning
-For Apple Chip users, you should be able to run everything in your Linux (aarch64) docker. However, if you plan to run the compiled executables, you may choose one of the following two options:
-
-1. Install Rosetta2 on your Mac OS, and then you can run all the test case executables directly in the Linux docker.
-2. Alternatively, install `qemu-user-static` package in your Linux docker and run the test case executables using `qemu-x86_64-static`
-:::
+> ⚠️ **Warning:**
+> 
+> For Apple Chip users, you should be able to run everything in your Linux (aarch64) docker. However, if you plan to run the compiled executables, you may choose one of the following two options:
+> 
+> 1. Install Rosetta2 on your Mac OS, and then you can run all the test case executables directly in the Linux docker.
+> 2. Alternatively, install `qemu-user-static` package in your Linux docker and run the test case executables using `qemu-x86_64-static`
 
 ## Grading
 

@@ -7,13 +7,13 @@ UP25 Lab01
 
 This lab aims to build a runtime environment required by this course. You have to be familiar with `docker`, `python`, and `pwntools` in this lab. Please follow the instructions to complete this lab. Once you have completed any grading item, please demo it to the TAs.
 
-:::danger
-You ***MUST*** upload your scripts to E3 before you demo.
-:::
+> ❗ **Danger:** 
+> 
+> You ***MUST*** upload your scripts to E3 before you demo.
 
-:::danger
-We do not discourage you to use LLM models, but if you use any LLM/AI approaches to solve the challenges, please also submit your full solving process to the E3 system.
-:::
+> ❗ **Danger:** 
+> 
+> We do not discourage you to use LLM models, but if you use any LLM/AI approaches to solve the challenges, please also submit your full solving process to the E3 system.
 
 ## Instructions
 
@@ -21,9 +21,9 @@ We do not discourage you to use LLM models, but if you use any LLM/AI approaches
 
 1. Clone the course runtime repo from [github](https://github.com/chunying/up-runtime) and follow the instructions to set up your runtime environment. Ensure that you have correctly set up your username and created the home directory for the user.
 
-   :::warning
-   You need to run the scripts in a UNIX-like host runtime, e.g., WSL in Windows and macOS.
-   :::
+   > ⚠️ **Warning:**
+   > 
+   > You need to run the scripts in a UNIX-like host runtime, e.g., WSL in Windows and macOS.
 
 1. Once `pwntools` is installed successfully, please solve the ***simple HTTP challenge*** by implementing a `pwntools` script to retrieve an IP address from the URL: [http://ipinfo.io/ip](http://ipinfo.io/ip). You may try to play with the URL using the command:
 
