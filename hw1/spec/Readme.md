@@ -178,9 +178,10 @@ To test the trampoline:
 
 Once the trampoline behaves as expected, convert your implementation into a shared library that sets up the trampoline when loaded via `LD_PRELOAD`. There's no need to jump directly to the trampoline from your shared library - just ensure it is properly established.
 
-:::info
-To execute custom initialization code automatically when your shared library is loaded, use the **`__attribute__((constructor))`** function attribute. This constructor runs before control returns from `dlopen()`, or during program startup when preloaded, making it ideal for tasks like setting up hooks or patching memory.
-:::
+<div style="border-left: 4px solid #2c974b; padding: 0.5em; background-color: #e6ffed;">
+  <strong>Info</strong>
+  To execute custom initialization code automatically when your shared library is loaded, use the **`__attribute__((constructor))`** function attribute. This constructor runs before control returns from `dlopen()`, or during program startup when preloaded, making it ideal for tasks like setting up hooks or patching memory.
+</div>
 
 #### Testing Requirements
 
