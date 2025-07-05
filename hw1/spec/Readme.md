@@ -179,6 +179,7 @@ To test the trampoline:
 Once the trampoline behaves as expected, convert your implementation into a shared library that sets up the trampoline when loaded via `LD_PRELOAD`. There's no need to jump directly to the trampoline from your shared library - just ensure it is properly established.
 
 > 💡 **Info:**
+>  
 >  To execute custom initialization code automatically when your shared library is loaded, use the **`__attribute__((constructor))`** function attribute. This constructor runs before control returns from `dlopen()`, or during program startup when preloaded, making it ideal for tasks like setting up hooks or patching memory.
 
 #### Testing Requirements
@@ -202,15 +203,15 @@ To rewrite the code:
 1. Replace every `syscall` instruction in these regions with `call *%rax`. This change redirects system calls to the trampoline, which then transfers control to your handler function.
 1. In your handler function, re-insert a `syscall` instruction to perform the original system call.
 
-:::info
-You don't need to handle `[vdso]` and `[vsyscall]`.
-:::
+> 💡 **Info:**
+>
+>  You don't need to handle `[vdso]` and `[vsyscall]`.
 
-:::warning
-Once system calls are redirected, any function that internally issues a system call (e.g., `printf`) will also trigger the hook.
-
-Ensure your handler **does not call functions whose system calls have been rewritten to go through the hook**, particularly most `libc` functions, as this will result in infinite recursion.
-:::
+> ⚠️ **Warning:**
+> 
+> Once system calls are redirected, any function that internally issues a system call (e.g., `printf`) will also trigger the hook.
+> 
+> Ensure your handler **does not call functions whose system calls have been rewritten to go through the hook**, particularly most `libc` functions, as this will result in infinite recursion.
 
 If the binary rewrite is successful, the modified program should continue to function normally, even when your shared library is preloaded.
 
@@ -252,16 +253,16 @@ To achieve this:
    }
    ```
 
-:::warning
-***Updated on Apr. 16***
-Zpoline is responsible for preserving volatile registers before transferring control from raw assembly to any C function.
-
-According to the x86-64 ABI, a system call must preserve the values of all general-purpose registers **except `rax`, `rcx`, and `r11`**.
-
-If registers such as `rdi`, `rsi`, `rdx`, `r8`, `r9`, or `r10` are not saved and restored, the hook function may unintentionally corrupt register values expected by the original code. This can lead to some faults that may not appear immediately, but only after several system calls, depending on the program’s register usage.
-
-To avoid such faults, Zpoline must ensure these registers are saved at the assembly boundary and restored after the hook returns.
-:::
+> ⚠️ **Warning:**
+>
+> ***Updated on Apr. 16***
+> Zpoline is responsible for preserving volatile registers before transferring control from raw assembly to any C function.
+> 
+> According to the x86-64 ABI, a system call must preserve the values of all general-purpose registers **except `rax`, `rcx`, and `r11`**.
+>
+> If registers such as `rdi`, `rsi`, `rdx`, `r8`, `r9`, or `r10` are not saved and restored, the hook function may unintentionally corrupt register values expected by the original code. This can lead to some faults that may not appear immediately, but only after several system calls, depending on the program’s register usage.
+>
+> To avoid such faults, Zpoline must ensure these registers are saved at the assembly boundary and restored after the hook returns.
 
 #### **Testing Requirement**
 
@@ -347,13 +348,13 @@ void __hook_init(const syscall_hook_fn_t trigger_syscall,
 }
 ```
 
-:::warning
-The **init library** is responsible for ensuring proper stack alignment before invoking the function pointer stored in `hooked_syscall`.
-
-According to the x86-64 ABI, the stack must be aligned to a **16-byte boundary**.
-
-Misaligned stacks can cause undefined behavior or crashes when invoking functions in the standard C library from within the hook function referenced by `hooked_syscall`.
-:::
+> ⚠️ **Warning:**
+> :::warning
+> The **init library** is responsible for ensuring proper stack alignment before invoking the function pointer stored in `hooked_syscall`.
+>
+> According to the x86-64 ABI, the stack must be aligned to a **16-byte boundary**.
+>
+> Misaligned stacks can cause undefined behavior or crashes when invoking functions in the standard C library from within the hook function referenced by `hooked_syscall`.
 
 #### Testing Requirement
 
