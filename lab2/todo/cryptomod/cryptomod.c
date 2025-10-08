@@ -25,10 +25,7 @@
 #define MAX_BUFFER_SIZE 16384
 #define BYTE_TABLE_SIZE 256
 
-DEFINE_MUTEX(cryptodev_mutex);
-DEFINE_MUTEX(byte_read_mutex);
-DEFINE_MUTEX(byte_write_mutex);
-DEFINE_MUTEX(byte_frequency_table_mutex);
+DEFINE_MUTEX(global_lock);
 // File descriptor: hint 7
 
 struct cryptomod_data {
@@ -67,14 +64,18 @@ static int cryptomod_dev_open(struct inode *i, struct file *f) {
 static int cryptomod_dev_close(struct inode *i, struct file *f) {
     struct cryptomod_data *data = f->private_data;
     if (data) {
+        if (data->kernel_buffer) {
+            kfree(data->kernel_buffer);
+            data->kernel_buffer = NULL;
+        }
         kfree(data);
+        data = NULL;
     }
     return 0;
 }
 
 // from sample_code.c
-static int test_skcipher(struct cryptomod_data *private_data, const size_t datasize)
-{
+static int test_skcipher(struct cryptomod_data *private_data, const size_t datasize) {
     u8* key = private_data->crypto_config.key;
     size_t key_len = private_data->crypto_config.key_len;
     u8* data = private_data->kernel_buffer;
@@ -123,46 +124,41 @@ out:
     crypto_free_skcipher(tfm);
     skcipher_request_free(req);
     kfree(data);
+    data = NULL;
+
     return err;
 }
 
 // write: write to kernel buffer
 static ssize_t cryptomod_dev_write(struct file *f, const char __user *buf, size_t len, loff_t *off) {
-    mutex_lock(&cryptodev_mutex);
     struct cryptomod_data *data = f->private_data;
-    printk("Start of write pid:%u\n", current->pid);
+    // printk("Start of write pid:%u\n", current->pid);
     if (!data->device_setup || data->finalize) {
-        mutex_unlock(&cryptodev_mutex);
         return -EINVAL;
     }
     
     size_t process_bytes = min(len,  MAX_BUFFER_SIZE - data->cur_kernel_buffer_pos);
     if (process_bytes == 0) {
-        mutex_unlock(&cryptodev_mutex);
         return -EAGAIN;
     }
 
     if (copy_from_user(data->kernel_buffer + data->cur_kernel_buffer_pos, buf, process_bytes)) {
-        mutex_unlock(&cryptodev_mutex);
         return -EBUSY;
     }
     
     data->cur_kernel_buffer_pos += process_bytes;
-    mutex_lock(&byte_write_mutex);
+    mutex_lock(&global_lock);
     byte_write += process_bytes;
-    printk("End of write pid:%u\n", current->pid);
-    mutex_unlock(&byte_write_mutex);
-    mutex_unlock(&cryptodev_mutex);
+    mutex_unlock(&global_lock);
+    // printk("End of write pid:%u\n", current->pid);
     return process_bytes;
 }
 
 // read and process (dec or enc):
 static ssize_t cryptomod_dev_read(struct file *f, char __user *buf, size_t len, loff_t *off) {
-    mutex_lock(&cryptodev_mutex);
-    printk("Start of read pid:%u\n", current->pid);
+    // printk("Start of read pid:%u\n", current->pid);
     struct cryptomod_data *data = f->private_data;
     if (!data->device_setup) {
-        mutex_unlock(&cryptodev_mutex);
         return -EINVAL;
     }
 
@@ -173,7 +169,6 @@ static ssize_t cryptomod_dev_read(struct file *f, char __user *buf, size_t len, 
     }
 
     if (process_bytes == 0 && !data->finalize) {
-        mutex_unlock(&cryptodev_mutex);
         return -EAGAIN;
     }
     
@@ -183,35 +178,32 @@ static ssize_t cryptomod_dev_read(struct file *f, char __user *buf, size_t len, 
     } else {
         test_skcipher(data, process_bytes);
     }
-    mutex_lock(&byte_frequency_table_mutex);
     if (data->crypto_config.c_mode == ENC) {
         for (size_t i = 0; i < process_bytes; ++i) {
+            mutex_lock(&global_lock);
             ++byte_frequency_table[(unsigned char)data->kernel_buffer[i]];
+            mutex_unlock(&global_lock);
         }
     }
-    mutex_unlock(&byte_frequency_table_mutex);
     if (copy_to_user(buf, data->kernel_buffer, process_bytes)) {
-        mutex_unlock(&cryptodev_mutex);
         return -EBUSY;
     }
 
     data->cur_kernel_buffer_pos -= process_bytes;
     memmove(data->kernel_buffer, data->kernel_buffer + process_bytes, data->cur_kernel_buffer_pos);
-    mutex_lock(&byte_read_mutex);
+    mutex_lock(&global_lock);
     byte_read += process_bytes;
-    printk("End of read pid:%u\n", current->pid);
-    mutex_unlock(&byte_read_mutex);
-    mutex_unlock(&cryptodev_mutex);
+    mutex_unlock(&global_lock);
+    // printk("End of read pid:%u\n", current->pid);
     return process_bytes;
 }
 
 // ioctl
 static long cryptomod_dev_ioctl(struct file *fp, unsigned int cmd, unsigned long arg) {
-    mutex_lock(&cryptodev_mutex);
     struct cryptomod_data *data = fp->private_data;
     switch (cmd) {
     case CM_IOC_SETUP:
-        printk("In ioctl setup pid:%u\n", current->pid);
+        // printk("In ioctl setup pid:%u\n", current->pid);
         data->device_setup = 1;
         data->finalize = 0;
         data->cur_kernel_buffer_pos = 0;
@@ -219,37 +211,30 @@ static long cryptomod_dev_ioctl(struct file *fp, unsigned int cmd, unsigned long
         
         // error handling
         if ((struct CryptoSetup *)arg == NULL) {
-            mutex_unlock(&cryptodev_mutex);
             return -EINVAL;
         }
 
         if (!data->kernel_buffer || copy_from_user(&(data->crypto_config), (struct CryptoSetup *)arg, sizeof(struct CryptoSetup))) {
-            mutex_unlock(&cryptodev_mutex);
             return -EBUSY;
         }
 
         if (data->crypto_config.key_len != 16 && data->crypto_config.key_len != 24 && data->crypto_config.key_len != 32) {
-            mutex_unlock(&cryptodev_mutex);
             return -EINVAL;
         }
         
         if (data->crypto_config.io_mode != BASIC && data->crypto_config.io_mode != ADV) {
-            mutex_unlock(&cryptodev_mutex);
             return -EINVAL;
         }
 
         if (data->crypto_config.c_mode != ENC && data->crypto_config.c_mode != DEC) {
-            mutex_unlock(&cryptodev_mutex);
             return -EINVAL;
         }
         
         memset(data->kernel_buffer, 0, MAX_BUFFER_SIZE);
-        mutex_unlock(&cryptodev_mutex);
         return 0;
     case CM_IOC_FINALIZE:
-        printk("In ioctl final pid:%u\n", current->pid);
+        // printk("In ioctl final pid:%u\n", current->pid);
         if (!data->device_setup) {
-            mutex_unlock(&cryptodev_mutex);
             return -EINVAL;
         }
         data->finalize = 1;
@@ -266,11 +251,9 @@ static long cryptomod_dev_ioctl(struct file *fp, unsigned int cmd, unsigned long
                     data->kernel_buffer[data->cur_kernel_buffer_pos++] = CM_BLOCK_SIZE;
                 }
             }
-            mutex_unlock(&cryptodev_mutex);
             return 0;
         case DEC:
             if (data->cur_kernel_buffer_pos % CM_BLOCK_SIZE) {
-                mutex_unlock(&cryptodev_mutex);
                 return -EINVAL;
             }
             test_skcipher(data, data->cur_kernel_buffer_pos);
@@ -280,45 +263,35 @@ static long cryptomod_dev_ioctl(struct file *fp, unsigned int cmd, unsigned long
                 is_padding &= data->kernel_buffer[data->cur_kernel_buffer_pos-1-i] == padding_value;
             }
             if (!is_padding){
-                mutex_unlock(&cryptodev_mutex);
                 return -EINVAL;
             }
                 
             while (data->kernel_buffer[data->cur_kernel_buffer_pos-1] == padding_value) {
                 data->kernel_buffer[data->cur_kernel_buffer_pos--] = 0;
             }
-            mutex_unlock(&cryptodev_mutex);
             return 0;
         default:
-            mutex_unlock(&cryptodev_mutex);
             return 0;
         }
     case CM_IOC_CLEANUP:
-        printk("In ioctl clean pid:%u\n", current->pid);
+        // printk("In ioctl clean pid:%u\n", current->pid);
         if (!data->device_setup) {
-            mutex_unlock(&cryptodev_mutex);
             return -EINVAL;
         }
         data->cur_kernel_buffer_pos = 0;
         memset(data->kernel_buffer, 0, MAX_BUFFER_SIZE);
         data->finalize = 0;
-        mutex_unlock(&cryptodev_mutex);
         return 0;
     case CM_IOC_CNT_RST:
-        printk("In ioctl rst pid:%u\n", current->pid);
-        mutex_lock(&byte_read_mutex);
-        mutex_lock(&byte_write_mutex);
-        mutex_lock(&byte_frequency_table_mutex);
+        // printk("In ioctl rst pid:%u\n", current->pid);
+        mutex_lock(&global_lock);
         byte_read = 0;
         byte_write = 0;
         memset(byte_frequency_table, 0, sizeof(byte_frequency_table));
-        mutex_unlock(&byte_read_mutex);
-        mutex_unlock(&byte_write_mutex);
-        mutex_unlock(&byte_frequency_table_mutex);
-        mutex_unlock(&cryptodev_mutex);
+        mutex_unlock(&global_lock);
+
         return 0;
     default:
-        mutex_unlock(&cryptodev_mutex);
         return -EINVAL;
     }
 }
@@ -334,19 +307,19 @@ static const struct file_operations cryptomod_dev_fops = {
 
 // proc read: print the counter
 static int cryptomod_proc_read(struct seq_file *m, void *v) {
-    mutex_lock(&byte_read_mutex);
-    mutex_lock(&byte_write_mutex);
-    mutex_lock(&byte_frequency_table_mutex);
+    mutex_lock(&global_lock);
     seq_printf(m, "%zu %zu\n", byte_read, byte_write);
+    mutex_unlock(&global_lock);
+
+    mutex_lock(&global_lock);
     for (int i = 0; i < 16; i++) {
         for (int j = 0; j < 16; j++) {
             seq_printf(m, "%d ", byte_frequency_table[i * 16 + j]);
         }
         seq_printf(m, "\n");
     }
-    mutex_unlock(&byte_read_mutex);
-    mutex_unlock(&byte_write_mutex);
-    mutex_unlock(&byte_frequency_table_mutex);
+    mutex_unlock(&global_lock);
+
     return 0;
 }
 
@@ -369,8 +342,8 @@ static char *cryptomod_devnode(const struct device *dev, umode_t *mode) {
     return NULL;
 }
  
-static int __init cryptomod_init(void)
-{
+static int __init cryptomod_init(void) {
+
     // create char dev
     if(alloc_chrdev_region(&devnum, 0, 1, "updev") < 0)
         return -1;
@@ -392,7 +365,7 @@ static int __init cryptomod_init(void)
     // create proc
     proc_create("cryptomod", 0, NULL, &cryptomod_proc_fops);
 
-    printk(KERN_INFO "cryptomod: initialized.\n");
+    // printk(KERN_INFO "cryptomod: initialized.\n");
     return 0;    // Non-zero return means that the module couldn't be loaded.
  
 release_device:
@@ -404,8 +377,7 @@ release_region:
     return -1;
 }
 
-static void __exit cryptomod_cleanup(void)
-{
+static void __exit cryptomod_cleanup(void) {
     remove_proc_entry("cryptomod", NULL);
 
     cdev_del(&c_dev);
@@ -413,7 +385,7 @@ static void __exit cryptomod_cleanup(void)
     class_destroy(clazz);
     unregister_chrdev_region(devnum, 1);
 
-    printk(KERN_INFO "cryptomod: cleaned up.\n");
+    // printk(KERN_INFO "cryptomod: cleaned up.\n");
 }
 
 module_init(cryptomod_init);
