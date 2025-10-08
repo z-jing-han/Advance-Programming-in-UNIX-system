@@ -12,7 +12,8 @@ else
         echo "Skipping module build..."
     else
         cd "$MODULE_DIR"
-        make
+        make clean
+	make
         make install
         cd ..
     fi

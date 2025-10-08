@@ -32,4 +32,4 @@ In this case, you must always keep one block in the buffer before receiving the 
 
 ||In theory, for side-channel issues with multi-threading, just locking everything with mutex should work. But in my case, if I don’t add `printk` at the beginning and end of a function, it causes multithreading issues—so there’s probably a bug||
 
-||Also, ~~since this was a long time ago~~, I honestly don’t remember all the issues I encountered while writing it. If I study kernel modules more in the future, I’ll try to come back and add any useful notes||
+25/10/8: Fix the error of multi-thread test case and the kernel panic cause by large kernel buffer size (vi `kmalloc`) => use the `kfree()` care, care very carefully, please
