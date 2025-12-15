@@ -13,8 +13,14 @@ sdb: sdb.o ptools.o
 %.o: %.cpp
 	$(CXX) -c $(CFLAGS) $<
 
-clean:
+clean: clean_test_case
 	rm -f *.o *~ $(PROGS)
+
+copy_test_case:
+	cp ../spec/hw2_demo_program/* ./
+
+clean_test_case:
+	rm -f anon hello hola ld-linux-x86-64.so.2 libc.so.6 mortis rana soyorin
 
 ex1: sdb
 	printf "si\nload ./hello\nsi\nsi\ncont\n" | ./sdb
@@ -44,4 +50,4 @@ h3: sdb
 h4: sdb
 	printf "breakrva 1828\ncont\nbreak 700000000000\ncont\npatch 0x700000000fc9 6844200b018134240101010148b875616e67204c4f565048b850726f662e206368504889e66a015f6a135a6a01580f0531ff6a3c58\nsyscall\nsyscall\nsi\npatch 0x700000000ffe 0f05\nbreak 700000000ffd\ncont\ndelete 2\ncont\n" | ./sdb ./anon
 
-run_all_ex: extra_example ex1 ex2 ex3 ex4 h1 h2 h3 h4
+run_all_ex: copy_test_case extra_example ex1 ex2 ex3 ex4 h1 h2 h3 h4

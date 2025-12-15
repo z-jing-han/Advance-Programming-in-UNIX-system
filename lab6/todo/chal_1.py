@@ -7,7 +7,7 @@ import sys
 context.arch = 'amd64'
 context.os = 'linux'
 
-exe = './shellcode'
+exe = '../spec/shellcode'
 port = 12341
 
 elf = ELF(exe)
@@ -63,7 +63,7 @@ sc = asm(asm_code, arch='amd64')
 
 r.sendafter(b"code> ", sc)
 
-print(r.recv().decode())
+print(r.recv())
 r.close()
 
 # vim: set tabstop=4 expandtab shiftwidth=4 softtabstop=4 number cindent fileencoding=utf-8 :

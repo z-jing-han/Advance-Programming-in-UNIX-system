@@ -18,10 +18,10 @@ The method to trigger the `race condition` is by sending data to the server.
     If the execution order is like above, you can read the unintended file.
     So just keep trying until you read something like `flag{....`
 
-2. At `cha_1.c:56`, there's a `get_hostbyname2` call. Just run `man get_hostbyname2` and you’ll see this function is **not** thread-safe. Yep, that’s it.
+2. At `cha_2.c:56`, there's a `get_hostbyname2` call. Just run `man get_hostbyname2` and you’ll see this function is **not** thread-safe. Yep, that’s it.
     > ⚠️ **Warning:**
     > 
-    > The issue isn’t the `ent` variable returned at `cha_1.c:56`—it’s a memory problem with the function itself.
+    > The issue isn’t the `ent` variable returned at `cha_2.c:56`—it’s a memory problem with the function itself.
     
     Also, using this method, it takes around 2–3 minutes to finally get the flag.
     The TA mentioned that if the data you send is correct, you’ll get it right away.

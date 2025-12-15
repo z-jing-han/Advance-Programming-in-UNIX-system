@@ -28,8 +28,8 @@ clean:
 
 .PHONY: clean
 
-run_dummy:
+run_dummy: all
 	LD_LIBRARY_PATH=. ./gotoku.local
 
-preload:
+preload: all
 	LD_PRELOAD=./libgotoku.so LD_LIBRARY_PATH=. ./gotoku.local

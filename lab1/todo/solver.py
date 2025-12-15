@@ -17,7 +17,7 @@ if len(sys.argv) > 1:
     solve_pow(r)
 else:
     ## for local testing
-    r = process('./guess.dist.py', shell=False)
+    r = process('../spec/guess.dist.py', shell=False)
 
 def sendmsg(m):
     ## Modify from /.guess.dist.py sedmsg(m) function: 'big' -> 'little'

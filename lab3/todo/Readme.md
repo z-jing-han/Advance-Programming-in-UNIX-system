@@ -82,6 +82,9 @@
     1. library (`.c`->`.o`->`.so`) — this is not for execution, but to be linked by others
     2. Executable (`.c`->`.o`->`exe`) — this is the actual runnable binary, which needs to link libraries if needed
 
+    And How to exe the ex1? Just `make run_dummy`.
+    If you see the `No no no ...` result, It is fine.
+
 2. What to write in the shared object (`.so`, i.e., library)?
     1. First, look at `libgotoku_dummy.c` in the dummy folder. That’s the original library. Your goal is to replace this.
     2. Before replacing it, you can reuse stuff inside. You can use `dlsym()` to fetch the original library's symbols and reuse its functions.
@@ -95,6 +98,10 @@
     ```bash
     LD_PRELOAD=./libgotoku.so LD_LIBRARY_PATH=. ./gotoku.local
     # Set two environment variables: first is which .so to load, second is library path, third is the executable
+    ```
+    Or you can just use the makefile here:
+    ```bash
+    make run_local_lib
     ```
     
 3. What about 2-B (10%)? Folder: `local_lib/`
@@ -111,6 +118,12 @@
     What you do is compile your own library and send it to the server, and the server links your library and runs it.
     
     However, you won't know the `gop_*` addresses on the `server` in advance. But the TA provides the actual binary that the server is executing, so you can extract the `gop_*` addresses from that — just hardcode those addresses into your program and send it.
+
+    > ❗ **Danger:**
+    > 
+    > There are some error that if you test this solver on local (`make run_remote_lib`) such as `gop_864` not exist, But still can pass remote chanllenge (`make submit`)
+
+    
     
 Steps 3, 4, and 5 are likely graded based on the output only.
 

@@ -18,11 +18,11 @@ clean:
 .PHONY: all clean
 
 run_remote_lib:
-	cp ../dummy/libgotoku.so .
+	cp ../local_lib/libgotoku.so .
 	LD_PRELOAD=./libsolver.so LD_LIBRARY_PATH=. ./gotoku
 
 get_got:
 	python3 get_got.py
 
-submit:
+submit: all
 	python3 submit.py libsolver.so

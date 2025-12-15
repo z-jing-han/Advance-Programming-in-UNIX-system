@@ -12,6 +12,11 @@ Also, this assignment heavily uses a debugger, typically `gdb`, but because this
 
 ## todo
 
+This line should be set at host, not in container.
+```sh
+sudo sh -c "echo 0 > /proc/sys/vm/mmap_min_addr"
+```
+
 ### Part 1
 This part has a step-by-step guide in the spec. It’s essentially replicating the approach from the zopline paper.
 

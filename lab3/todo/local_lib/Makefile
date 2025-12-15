@@ -17,10 +17,15 @@ clean:
 
 .PHONY: all clean
 
-run_local_lib:
+run_local_lib: get_got
 	cp libgotoku.so ../dummy/; \
 	cd ../dummy; \
 	make preload; \
+	make clean
 
-get_got:
+get_got: make_dummy
 	python3 get_got.py
+
+make_dummy:
+	cd ../dummy; \
+	make

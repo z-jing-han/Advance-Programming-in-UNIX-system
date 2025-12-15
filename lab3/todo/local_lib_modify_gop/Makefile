@@ -17,7 +17,8 @@ clean:
 
 .PHONY: all clean
 
-run_local_lib:
+run_local_lib: all
 	cp libgotoku.so ../dummy/; \
 	cd ../dummy; \
 	make preload; \
+	make clean;

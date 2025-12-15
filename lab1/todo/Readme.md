@@ -10,6 +10,8 @@ There’s a “pow (proof-of-work)” that pops up in the middle—you can just 
 
 Choose any environment setup you like. Most people probably use **WSL**, but I used **VMware + Ubuntu 24.04** and it worked fine. (Also, judging from later labs, doing the assignments on MacOS might cause a lot of trouble, so it’s better to get a Linux machine.)
 
+UPDATE: I Change the environment into WSL (after the end of semester, no reason), and I also add some bind mount term in `up-runtime/start.sh` to let the lib mount to container. Just for fun.
+
 You can think of pwntool as a scripting library to help with communication/interaction tasks.
 
 The main features used fall into three types:

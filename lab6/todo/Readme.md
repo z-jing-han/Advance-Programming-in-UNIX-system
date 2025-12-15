@@ -21,7 +21,11 @@ Also, the file descriptor (fd) will always be 3 (from Discord), since it’s the
 This time, it’s recommended to use pwndbg to examine the stack — it’s more convenient.
 So how to debug?
 When running the script, pass in the argument `local` — this will print out the PID, and then you can attach to the PID for debugging.
-s
+
+> ❗ **Danger:** 
+> 
+> Please remember to prepare the `/FLAG` in the root dir.
+
 ### 1
 Looking at the server code, it’s simple — just send your assembly code and it’ll execute directly.
 
@@ -175,3 +179,4 @@ Use `objdump` to locate the call `<task>` instruction.
 
 To find specific ROP gadgets, use the instructions in the spec + grep.
 There’s only one `syscall; ret;` — I found it using pwndbg, referred from comment
+

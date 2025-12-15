@@ -7,7 +7,7 @@ import sys
 context.arch = 'amd64'
 context.os = 'linux'
 
-exe = './bof3'
+exe = '../spec/bof3'
 port = 12344
 
 elf = ELF(exe)
