@@ -1,5 +1,13 @@
 #!/bin/bash
 
+IS_WSL=0
+if grep -qi microsoft /proc/version; then
+    IS_WSL=1
+    echo "[Info] Detected WSL environment."
+else
+    echo "[Info] Detected Native Linux environment (VMWare/DualBoot)."
+fi
+
 if [ -z "$1" ]; then
     echo "Error: Missing module directory argument."
     echo "Usage: $0 <module_directory>"
@@ -12,8 +20,15 @@ else
         echo "Skipping module build..."
     else
         cd "$MODULE_DIR"
-        make clean
-	make
+
+        if [ "$IS_WSL" -eq 1 ]; then
+            echo "[WSL] Skipping 'make clean' and 'make' (Assuming Cross-Compile is done via Docker)."
+        else
+            echo "[Native] Running 'make clean' and 'make'..."
+            make clean
+            make
+        fi
+
         make install
         cd ..
     fi

@@ -7,6 +7,63 @@ It's relatively complex, so there’s a pre-lab practice beforehand, which is ba
 
 ||It’s complicated—I didn’t really understand it either||
 
+
+## Pre-lab
+
+Assume the module name is `cryptomod`
+
+### WSL
+Follow the later part of instruction in pre-lab, cross-complie is needed.
+
+First setting
+```.bash
+# In Host Machine (WSL)
+cd todo/cryptomod
+cp ../../spec/Pre-Lab-Announcement/*.tbz ./
+tar -xvf crossbuild.tbz
+cd crossbuild
+chmod +x build.sh
+# Change Image Name if you want
+./build.sh
+```
+
+```.bash
+# In up-runtime Dokcer
+cd todo/cryptomod
+cp ../../spec/Pre-Lab-Announcement/*.tbz ./
+tar -xvf dist-6.6.17.tbz
+chmod +x qemu.sh
+```
+
+Then, each time to complie
+```.bash
+# In Host Machine (WSL), Ensure in the parent of dist/ and cryptomod/
+docker run -it --rm --user "$UID:$GID" -v "`pwd`:/build" -w /build -e PS1="buildenv:\w\$ " upclass/crossbuild /bin/bash --norc
+# Enter cross-complie docker
+cd crypto
+make clean
+make ARCH=x86 CROSS_COMPILE=x86_64-linux-gnu-
+exit
+```
+
+```.bash
+# In up-runtime Docker
+./archive_into_kernel.sh cryptomod/
+./qemu.sh
+```
+
+### VMWare + Ubuntu
+
+```.bash
+cd todo/cryptomod
+cp ../../spec/Pre-Lab-Announcement/dist-6.6.17.tbz ./
+tar -xvf dist-6.6.17.tbz
+rm -f *.tbz
+chmod +x qemu.sh
+./archive_into_kernel.sh cryptomod/
+./qemu.sh
+```
+
 ## Goal
 
 The kernel module includes:
