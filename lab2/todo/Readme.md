@@ -10,6 +10,12 @@ It's relatively complex, so there’s a pre-lab practice beforehand, which is ba
 
 ## Pre-lab
 
+The Dockerfile does not contain `cpio` and `qemu`, so we need to install it (or you can modify the Dockerfile)
+
+```.bash
+sudo apt install qemu-system-x86 cpio
+```
+
 Assume the module name is `cryptomod`
 
 ### WSL
@@ -38,6 +44,7 @@ chmod +x qemu.sh
 Then, each time to complie
 ```.bash
 # In Host Machine (WSL), Ensure in the parent of dist/ and cryptomod/
+# And if you change the Image Name, you need to replace it at upclass/crossbuild
 docker run -it --rm --user "$UID:$GID" -v "`pwd`:/build" -w /build -e PS1="buildenv:\w\$ " upclass/crossbuild /bin/bash --norc
 # Enter cross-complie docker
 cd crypto
