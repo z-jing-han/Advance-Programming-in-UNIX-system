@@ -1,0 +1,5 @@
+# R1b — a blank line in the middle of the session
+@args ./hello
+si
+@blank
+si

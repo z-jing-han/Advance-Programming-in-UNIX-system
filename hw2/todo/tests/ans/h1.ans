@@ -1,0 +1,47 @@
+** program './mortis' loaded. entry point: 0x401070.
+	0x401070: f3 0f 1e fa                     endbr64	
+	0x401074: 31 ed                           xor	ebp, ebp
+	0x401076: 49 89 d1                        mov	r9, rdx
+	0x401079: 5e                              pop	rsi
+	0x40107a: 48 89 e2                        mov	rdx, rsp
+(sdb) $rax 0x000000000000001c	$rbx 0x0000000000000000	$rcx 0x00007ffe83250418
+$rdx 0x00007b7c63d88040	$rsi 0x00007b7c63dbd888	$rdi 0x00007b7c63dbd2e0
+$rbp 0x0000000000000000	$rsp 0x00007ffe83250400	$r8  0x00000000000001ff
+$r9  0x000000000000000f	$r10 0x00007b7c63d82860	$r11 0x00007b7c63d99d70
+$r12 0x0000000000401070	$r13 0x00007ffe83250400	$r14 0x0000000000000000
+$r15 0x0000000000000000	$rip 0x0000000000401070	$eflags 0x0000000000000202
+(sdb) ** set a breakpoint at 0x401210.
+(sdb) ** set a breakpoint at 0x401214.
+(sdb) ** hit a breakpoint at 0x401210.
+	0x401210: 83 7d dc 04                     cmp	dword ptr [rbp - 0x24], 4
+	0x401214: 7e be                           jle	0x4011d4
+	0x401216: bf 00 00 00 00                  mov	edi, 0
+	0x40121b: e8 6a ff ff ff                  call	0x40118a
+	0x401220: b8 00 00 00 00                  mov	eax, 0
+(sdb) ** hit a breakpoint at 0x401214.
+	0x401214: 7e be                           jle	0x4011d4
+	0x401216: bf 00 00 00 00                  mov	edi, 0
+	0x40121b: e8 6a ff ff ff                  call	0x40118a
+	0x401220: b8 00 00 00 00                  mov	eax, 0
+	0x401225: 48 8b 55 f8                     mov	rdx, qword ptr [rbp - 8]
+(sdb) I like cucumbers
+** hit a breakpoint at 0x401210.
+	0x401210: 83 7d dc 04                     cmp	dword ptr [rbp - 0x24], 4
+	0x401214: 7e be                           jle	0x4011d4
+	0x401216: bf 00 00 00 00                  mov	edi, 0
+	0x40121b: e8 6a ff ff ff                  call	0x40118a
+	0x401220: b8 00 00 00 00                  mov	eax, 0
+(sdb) ** hit a breakpoint at 0x401214.
+	0x401214: 7e be                           jle	0x4011d4
+	0x401216: bf 00 00 00 00                  mov	edi, 0
+	0x40121b: e8 6a ff ff ff                  call	0x40118a
+	0x401220: b8 00 00 00 00                  mov	eax, 0
+	0x401225: 48 8b 55 f8                     mov	rdx, qword ptr [rbp - 8]
+(sdb) ** patch memory at 0x4011d8.
+(sdb) ** patch memory at 0x4011d4.
+(sdb) 	0x4011d4: 31 ff                           xor	edi, edi
+	0x4011d6: 6a 3c                           push	0x3c
+	0x4011d8: 58                              pop	rax
+	0x4011d9: 0f 05                           syscall	
+	0x4011db: 65 20 63 48                     and	byte ptr gs:[rbx + 0x48], ah
+(sdb) ** the target program terminated.

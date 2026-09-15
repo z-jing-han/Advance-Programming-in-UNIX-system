@@ -1,0 +1,10 @@
+# spec Example 4 — syscall enter/leave
+@args ./hello
+break 0x40179F
+break 4017B4
+cont
+syscall
+syscall
+syscall
+syscall
+syscall

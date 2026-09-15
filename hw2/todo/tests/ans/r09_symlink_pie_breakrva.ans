@@ -1,0 +1,14 @@
+** program './hola_link' loaded. entry point: 0x58244d052080.
+	0x58244d052080: f3 0f 1e fa                     endbr64	
+	0x58244d052084: 31 ed                           xor	ebp, ebp
+	0x58244d052086: 49 89 d1                        mov	r9, rdx
+	0x58244d052089: 5e                              pop	rsi
+	0x58244d05208a: 48 89 e2                        mov	rdx, rsp
+(sdb) ** set a breakpoint at 0x58244d0521c3.
+(sdb) ** hit a breakpoint at 0x58244d0521c3.
+	0x58244d0521c3: f3 0f 1e fa                     endbr64	
+	0x58244d0521c7: 55                              push	rbp
+	0x58244d0521c8: 48 89 e5                        mov	rbp, rsp
+	0x58244d0521cb: 48 83 ec 20                     sub	rsp, 0x20
+	0x58244d0521cf: 64 48 8b 04 25 28 00 00 00      mov	rax, qword ptr fs:[0x28]
+(sdb) 

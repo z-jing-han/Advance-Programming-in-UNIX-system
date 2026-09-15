@@ -1,0 +1,9 @@
+# R2 — delete a breakpoint, then set a new one at the same address
+@args ./rana
+break 401798
+delete 0
+break 401798
+info break
+cont
+cont
+cont

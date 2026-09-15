@@ -1,0 +1,6 @@
+# R5 — breakpoint sits on the program's last executed instruction
+@args ./hello
+break 447e4b
+cont
+cont
+cont

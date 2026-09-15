@@ -1,0 +1,5 @@
+# spec Example 1-2 — PIE + dynamically linked
+@args ./hola
+si
+si
+cont

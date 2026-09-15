@@ -1,0 +1,19 @@
+(sdb) ** please load a program first.
+(sdb) ** program './hello' loaded. entry point: 0x401620.
+	0x401620: f3 0f 1e fa                     endbr64	
+	0x401624: 31 ed                           xor	ebp, ebp
+	0x401626: 49 89 d1                        mov	r9, rdx
+	0x401629: 5e                              pop	rsi
+	0x40162a: 48 89 e2                        mov	rdx, rsp
+(sdb) 	0x401624: 31 ed                           xor	ebp, ebp
+	0x401626: 49 89 d1                        mov	r9, rdx
+	0x401629: 5e                              pop	rsi
+	0x40162a: 48 89 e2                        mov	rdx, rsp
+	0x40162d: 48 83 e4 f0                     and	rsp, 0xfffffffffffffff0
+(sdb) 	0x401626: 49 89 d1                        mov	r9, rdx
+	0x401629: 5e                              pop	rsi
+	0x40162a: 48 89 e2                        mov	rdx, rsp
+	0x40162d: 48 83 e4 f0                     and	rsp, 0xfffffffffffffff0
+	0x401631: 50                              push	rax
+(sdb) hello world!
+** the target program terminated.

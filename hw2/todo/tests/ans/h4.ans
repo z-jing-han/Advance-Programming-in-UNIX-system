@@ -1,0 +1,47 @@
+** program './anon' loaded. entry point: 0x401650.
+	0x401650: f3 0f 1e fa                     endbr64	
+	0x401654: 31 ed                           xor	ebp, ebp
+	0x401656: 49 89 d1                        mov	r9, rdx
+	0x401659: 5e                              pop	rsi
+	0x40165a: 48 89 e2                        mov	rdx, rsp
+(sdb) ** set a breakpoint at 0x401828.
+(sdb) ** hit a breakpoint at 0x401828.
+	0x401828: ff d2                           call	rdx
+	0x40182a: 48 8d 05 cf 38 0c 00            lea	rax, [rip + 0xc38cf]
+	0x401831: 48 89 c7                        mov	rdi, rax
+	0x401834: e8 37 ae 00 00                  call	0x40c670
+	0x401839: b8 00 00 00 00                  mov	eax, 0
+(sdb) ** set a breakpoint at 0x700000000000.
+(sdb) ** hit a breakpoint at 0x700000000000.
+	0x700000000000: 90                              nop	
+	0x700000000001: 90                              nop	
+	0x700000000002: 90                              nop	
+	0x700000000003: 90                              nop	
+	0x700000000004: 90                              nop	
+(sdb) ** patch memory at 0x700000000fc9.
+(sdb) ** enter a syscall(1) at 0x700000000ff7.
+	0x700000000ff7: 0f 05                           syscall	
+	0x700000000ff9: 31 ff                           xor	edi, edi
+	0x700000000ffb: 6a 3c                           push	0x3c
+	0x700000000ffd: 58                              pop	rax
+	0x700000000ffe: 90                              nop	
+(sdb) Prof. chuang LOVE!
+** leave a syscall(1) = 19 at 0x700000000ff7.
+	0x700000000ff7: 0f 05                           syscall	
+	0x700000000ff9: 31 ff                           xor	edi, edi
+	0x700000000ffb: 6a 3c                           push	0x3c
+	0x700000000ffd: 58                              pop	rax
+	0x700000000ffe: 90                              nop	
+(sdb) 	0x700000000ffb: 6a 3c                           push	0x3c
+	0x700000000ffd: 58                              pop	rax
+	0x700000000ffe: 90                              nop	
+	0x700000000fff: c3                              ret	
+** the address is out of the range of the executable region.
+(sdb) ** patch memory at 0x700000000ffe.
+(sdb) ** set a breakpoint at 0x700000000ffd.
+(sdb) ** hit a breakpoint at 0x700000000ffd.
+	0x700000000ffd: 58                              pop	rax
+	0x700000000ffe: 0f 05                           syscall	
+** the address is out of the range of the executable region.
+(sdb) ** delete breakpoint 2.
+(sdb) ** the target program terminated.

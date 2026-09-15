@@ -1,0 +1,37 @@
+** program './rana' loaded. entry point: 0x401650.
+	0x401650: f3 0f 1e fa                     endbr64	
+	0x401654: 31 ed                           xor	ebp, ebp
+	0x401656: 49 89 d1                        mov	r9, rdx
+	0x401659: 5e                              pop	rsi
+	0x40165a: 48 89 e2                        mov	rdx, rsp
+(sdb) ** set a breakpoint at 0x40179e.
+(sdb) ** hit a breakpoint at 0x40179e.
+	0x40179e: 7e 11                           jle	0x4017b1
+	0x4017a0: 48 8d 05 5d 68 09 00            lea	rax, [rip + 0x9685d]
+	0x4017a7: 48 89 c7                        mov	rdi, rax
+	0x4017aa: e8 11 aa 00 00                  call	0x40c1c0
+	0x4017af: eb 0f                           jmp	0x4017c0
+(sdb) ** set a breakpoint at 0x4017a0.
+(sdb) ** patch memory at 0x40179e.
+(sdb) Num	Address
+0	0x40179e
+1	0x4017a0
+(sdb) live!
+** hit a breakpoint at 0x40179e.
+	0x40179e: 7f 11                           jg	0x4017b1
+	0x4017a0: 48 8d 05 5d 68 09 00            lea	rax, [rip + 0x9685d]
+	0x4017a7: 48 89 c7                        mov	rdi, rax
+	0x4017aa: e8 11 aa 00 00                  call	0x40c1c0
+	0x4017af: eb 0f                           jmp	0x4017c0
+(sdb) ** patch memory at 0x40179e.
+(sdb) ** delete breakpoint 0.
+(sdb) ** hit a breakpoint at 0x4017a0.
+	0x4017a0: 48 8d 05 5d 68 09 00            lea	rax, [rip + 0x9685d]
+	0x4017a7: 48 89 c7                        mov	rdi, rax
+	0x4017aa: e8 11 aa 00 00                  call	0x40c1c0
+	0x4017af: eb 0f                           jmp	0x4017c0
+	0x4017b1: 48 8d 05 5b 68 09 00            lea	rax, [rip + 0x9685b]
+(sdb) ** delete breakpoint 1.
+(sdb) matcha parfait
+matcha parfait
+** the target program terminated.

@@ -1,0 +1,6 @@
+# R4 — set a breakpoint directly on the entry point
+@args ./rana
+break 401650
+si
+si
+cont

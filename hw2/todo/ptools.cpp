@@ -9,8 +9,7 @@
 using namespace std;
 
 bool operator<(range_t r1, range_t r2) {
-	if(r1.begin < r2.begin && r1.end < r2.end) return true;
-	return false;
+    return r1.begin != r2.begin ? r1.begin < r2.begin : r1.end < r2.end;
 }
 
 int load_maps(pid_t pid, map<range_t, map_entry_t>& loaded) {
@@ -20,7 +19,6 @@ int load_maps(pid_t pid, map<range_t, map_entry_t>& loaded) {
 	snprintf(fn, sizeof(fn), "/proc/%u/maps", pid);
 	if((fp = fopen(fn, "rt")) == NULL) return -1;
 	while(fgets(buf, sizeof(buf), fp) != NULL) {
-		// fprintf(stderr, "%s", buf);
 		int nargs = 0;
 		char *token, *saveptr, *args[8], *ptr = buf;
 		map_entry_t m;
@@ -28,7 +26,7 @@ int load_maps(pid_t pid, map<range_t, map_entry_t>& loaded) {
 			args[nargs++] = token;
 			ptr = NULL;
 		}
-		if(nargs < 6) continue;
+		if(nargs < 5) continue;
 		if((ptr = strchr(args[0], '-')) != NULL) {
 			*ptr = '\0';
 			m.range.begin = strtol(args[0], NULL, 16);

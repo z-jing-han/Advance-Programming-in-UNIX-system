@@ -1,0 +1,64 @@
+** program './soyorin' loaded. entry point: 0x72a9f96e77a0.
+	0x72a9f96e77a0: f3 0f 1e fa                     endbr64	
+	0x72a9f96e77a4: 31 ed                           xor	ebp, ebp
+	0x72a9f96e77a6: 49 89 d1                        mov	r9, rdx
+	0x72a9f96e77a9: 5e                              pop	rsi
+	0x72a9f96e77aa: 48 89 e2                        mov	rdx, rsp
+(sdb) $rax 0x0000000000000000	$rbx 0x0000000000000000	$rcx 0x0000000000000000
+$rdx 0x0000000000000000	$rsi 0x0000000000000000	$rdi 0x0000000000000000
+$rbp 0x0000000000000000	$rsp 0x00007ffde37ae2a0	$r8  0x0000000000000000
+$r9  0x0000000000000000	$r10 0x0000000000000000	$r11 0x0000000000000000
+$r12 0x0000000000000000	$r13 0x0000000000000000	$r14 0x0000000000000000
+$r15 0x0000000000000000	$rip 0x000072a9f96e77a0	$eflags 0x0000000000000202
+(sdb) ** set a breakpoint at 0x72a9f96e7943.
+(sdb) ** set a breakpoint at 0x72a9f96e7947.
+(sdb) ** hit a breakpoint at 0x72a9f96e7943.
+	0x72a9f96e7943: 83 7d dc 04                     cmp	dword ptr [rbp - 0x24], 4
+	0x72a9f96e7947: 7e be                           jle	0x72a9f96e7907
+	0x72a9f96e7949: bf 00 00 00 00                  mov	edi, 0
+	0x72a9f96e794e: e8 6a ff ff ff                  call	0x72a9f96e78bd
+	0x72a9f96e7953: b8 00 00 00 00                  mov	eax, 0
+(sdb) ** hit a breakpoint at 0x72a9f96e7947.
+	0x72a9f96e7947: 7e be                           jle	0x72a9f96e7907
+	0x72a9f96e7949: bf 00 00 00 00                  mov	edi, 0
+	0x72a9f96e794e: e8 6a ff ff ff                  call	0x72a9f96e78bd
+	0x72a9f96e7953: b8 00 00 00 00                  mov	eax, 0
+	0x72a9f96e7958: 48 8b 55 f8                     mov	rdx, qword ptr [rbp - 8]
+(sdb) ** enter a syscall(1) at 0x72a9f972df8b.
+	0x72a9f972df8b: 0f 05                           syscall	
+	0x72a9f972df8d: 48 3d 01 f0 ff ff               cmp	rax, -0xfff
+	0x72a9f972df93: 73 01                           jae	0x72a9f972df96
+	0x72a9f972df95: c3                              ret	
+	0x72a9f972df96: 48 c7 c1 b8 ff ff ff            mov	rcx, -0x48
+(sdb) She is my friend
+** leave a syscall(1) = 17 at 0x72a9f972df8b.
+	0x72a9f972df8b: 0f 05                           syscall	
+	0x72a9f972df8d: 48 3d 01 f0 ff ff               cmp	rax, -0xfff
+	0x72a9f972df93: 73 01                           jae	0x72a9f972df96
+	0x72a9f972df95: c3                              ret	
+	0x72a9f972df96: 48 c7 c1 b8 ff ff ff            mov	rcx, -0x48
+(sdb) ** hit a breakpoint at 0x72a9f96e7943.
+	0x72a9f96e7943: 83 7d dc 04                     cmp	dword ptr [rbp - 0x24], 4
+	0x72a9f96e7947: 7e be                           jle	0x72a9f96e7907
+	0x72a9f96e7949: bf 00 00 00 00                  mov	edi, 0
+	0x72a9f96e794e: e8 6a ff ff ff                  call	0x72a9f96e78bd
+	0x72a9f96e7953: b8 00 00 00 00                  mov	eax, 0
+(sdb) Num	Address
+0	0x72a9f96e7943
+1	0x72a9f96e7947
+(sdb) ** delete breakpoint 1.
+(sdb) Num	Address
+0	0x72a9f96e7943
+(sdb) She is my friend
+** hit a breakpoint at 0x72a9f96e7943.
+	0x72a9f96e7943: 83 7d dc 04                     cmp	dword ptr [rbp - 0x24], 4
+	0x72a9f96e7947: 7e be                           jle	0x72a9f96e7907
+	0x72a9f96e7949: bf 00 00 00 00                  mov	edi, 0
+	0x72a9f96e794e: e8 6a ff ff ff                  call	0x72a9f96e78bd
+	0x72a9f96e7953: b8 00 00 00 00                  mov	eax, 0
+(sdb) ** delete breakpoint 0.
+(sdb) ** no breakpoints.
+(sdb) She is my friend
+She is my friend
+She is my friend
+** the target program terminated.

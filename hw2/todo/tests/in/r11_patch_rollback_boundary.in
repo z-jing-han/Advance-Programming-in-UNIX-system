@@ -1,0 +1,11 @@
+# R11 — patch crossing a mapping boundary must fail cleanly and roll back
+# fully (protect this already-correct behavior against regressions)
+@args ./anon
+breakrva 1828
+cont
+break 700000000000
+cont
+patch 0x700000000fe0 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+break 700000000fe1
+cont
+si

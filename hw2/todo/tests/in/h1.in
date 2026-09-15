@@ -1,0 +1,13 @@
+# spec Hidden Case 1 — mortis, patch into exit(60)
+@args ./mortis
+info reg
+break 401210
+break 401214
+cont
+si
+cont
+si
+patch 0x4011d8 580f05
+patch 0x4011d4 31ff6a3c
+si
+cont

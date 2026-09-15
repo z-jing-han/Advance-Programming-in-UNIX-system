@@ -131,3 +131,9 @@ This wrong flow passed all the public tests but only passed one hidden test.
 ||By the way, this broken logic passed all the hidden tests from the year before I took the course||
 Using this poor flow, I managed to fix only one hidden test case within three hours. So during the first demo, I only got a 70.
 Only after that did I go back and rethink the entire flow.
+
+## Refactor in 2026/09/15
++ breakInfoMap with addr-key
++ empty line as previous command (style from gdb)
++ disassemble with permission bit check
++ Code review and `run_tests.py` by claude

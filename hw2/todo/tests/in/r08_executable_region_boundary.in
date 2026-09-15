@@ -1,0 +1,6 @@
+# R8 — rip lands where the next page is readable but NOT executable
+@args ./rana
+break 401798
+cont
+patch 401798 e95d680900
+si

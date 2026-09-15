@@ -1,0 +1,8 @@
+# R6b — si swallows a pending syscall-exit stop
+@args ./mortis
+break 401210
+cont
+syscall
+si
+syscall
+syscall

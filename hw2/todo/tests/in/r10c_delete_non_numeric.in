@@ -1,0 +1,4 @@
+# R10c — delete with a non-numeric id
+@args ./rana
+delete abc
+cont

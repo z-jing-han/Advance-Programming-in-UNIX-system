@@ -1,0 +1,18 @@
+** program './hola' loaded. entry point: 0x5aaf56c6c080.
+	0x5aaf56c6c080: f3 0f 1e fa                     endbr64	
+	0x5aaf56c6c084: 31 ed                           xor	ebp, ebp
+	0x5aaf56c6c086: 49 89 d1                        mov	r9, rdx
+	0x5aaf56c6c089: 5e                              pop	rsi
+	0x5aaf56c6c08a: 48 89 e2                        mov	rdx, rsp
+(sdb) 	0x5aaf56c6c084: 31 ed                           xor	ebp, ebp
+	0x5aaf56c6c086: 49 89 d1                        mov	r9, rdx
+	0x5aaf56c6c089: 5e                              pop	rsi
+	0x5aaf56c6c08a: 48 89 e2                        mov	rdx, rsp
+	0x5aaf56c6c08d: 48 83 e4 f0                     and	rsp, 0xfffffffffffffff0
+(sdb) 	0x5aaf56c6c086: 49 89 d1                        mov	r9, rdx
+	0x5aaf56c6c089: 5e                              pop	rsi
+	0x5aaf56c6c08a: 48 89 e2                        mov	rdx, rsp
+	0x5aaf56c6c08d: 48 83 e4 f0                     and	rsp, 0xfffffffffffffff0
+	0x5aaf56c6c091: 50                              push	rax
+(sdb) hola mundo!
+** the target program terminated.

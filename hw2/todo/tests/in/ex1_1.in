@@ -1,0 +1,7 @@
+# spec Example 1-1 — load / si / cont, static non-PIE binary
+@args
+si
+load ./hello
+si
+si
+cont

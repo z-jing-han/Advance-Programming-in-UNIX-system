@@ -1,0 +1,8 @@
+# R6a — cont swallows a pending syscall-exit stop
+@args ./mortis
+break 401210
+cont
+syscall
+cont
+syscall
+syscall

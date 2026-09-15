@@ -1,0 +1,8 @@
+# R3 — set two breakpoints at the same address
+@args ./rana
+break 401798
+break 401798
+info break
+delete 1
+cont
+cont

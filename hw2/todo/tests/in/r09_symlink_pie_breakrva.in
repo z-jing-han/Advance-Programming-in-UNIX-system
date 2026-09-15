@@ -1,0 +1,5 @@
+# R9 — run a PIE binary through a symlink (maps reports the resolved name)
+@setup ln -sf hola hola_link
+@args ./hola_link
+breakrva 11c3
+cont

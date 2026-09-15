@@ -1,0 +1,4 @@
+# R10b — patch with no hex-string argument
+@args ./rana
+patch 401798
+cont

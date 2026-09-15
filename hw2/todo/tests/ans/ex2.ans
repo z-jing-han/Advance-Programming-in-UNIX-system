@@ -1,0 +1,36 @@
+** program './hello' loaded. entry point: 0x401620.
+	0x401620: f3 0f 1e fa                     endbr64	
+	0x401624: 31 ed                           xor	ebp, ebp
+	0x401626: 49 89 d1                        mov	r9, rdx
+	0x401629: 5e                              pop	rsi
+	0x40162a: 48 89 e2                        mov	rdx, rsp
+(sdb) ** set a breakpoint at 0x401626.
+(sdb) ** set a breakpoint at 0x4017e6.
+(sdb) Num	Address
+0	0x401626
+1	0x4017e6
+(sdb) 	0x401624: 31 ed                           xor	ebp, ebp
+	0x401626: 49 89 d1                        mov	r9, rdx
+	0x401629: 5e                              pop	rsi
+	0x40162a: 48 89 e2                        mov	rdx, rsp
+	0x40162d: 48 83 e4 f0                     and	rsp, 0xfffffffffffffff0
+(sdb) ** hit a breakpoint at 0x401626.
+	0x401626: 49 89 d1                        mov	r9, rdx
+	0x401629: 5e                              pop	rsi
+	0x40162a: 48 89 e2                        mov	rdx, rsp
+	0x40162d: 48 83 e4 f0                     and	rsp, 0xfffffffffffffff0
+	0x401631: 50                              push	rax
+(sdb) ** hit a breakpoint at 0x4017e6.
+	0x4017e6: e8 5a ff ff ff                  call	0x401745
+	0x4017eb: bf 00 00 00 00                  mov	edi, 0
+	0x4017f0: e8 84 ff ff ff                  call	0x401779
+	0x4017f5: b8 00 00 00 00                  mov	eax, 0
+	0x4017fa: 48 8b 55 f8                     mov	rdx, qword ptr [rbp - 8]
+(sdb) $rax 0x00007fff5943377a	$rbx 0x00007fff59433988	$rcx 0x0000000000800080
+$rdx 0x000000000000000d	$rsi 0x00007fff5943377a	$rdi 0x0000000000000001
+$rbp 0x00007fff59433790	$rsp 0x00007fff59433770	$r8  0x00000000004c7d70
+$r9  0x0000000000000004	$r10 0x0000000000000080	$r11 0x0000000000000206
+$r12 0x0000000000000001	$r13 0x00007fff59433978	$r14 0x00000000004c17d0
+$r15 0x0000000000000001	$rip 0x00000000004017e6	$eflags 0x0000000000000246
+(sdb) hello world!
+** the target program terminated.

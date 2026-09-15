@@ -1,0 +1,13 @@
+# spec Hidden Case 3 — rana, patch coexisting with breakpoints
+@args ./rana
+break 40179e
+cont
+break 4017a0
+patch 40179e 7f1148
+info break
+cont
+patch 40179e 7e
+delete 0
+cont
+delete 1
+cont

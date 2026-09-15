@@ -1,0 +1,17 @@
+# spec Hidden Case 2 — soyorin, PIE + syscall + delete
+@args ./soyorin
+info reg
+breakrva 8943
+breakrva 8947
+cont
+syscall
+syscall
+syscall
+cont
+info break
+delete 1
+info break
+cont
+delete 0
+info break
+cont

@@ -1,0 +1,15 @@
+# spec Hidden Case 4 — anon, shellcode patch + region boundary
+@args ./anon
+breakrva 1828
+cont
+break 700000000000
+cont
+patch 0x700000000fc9 6844200b018134240101010148b875616e67204c4f565048b850726f662e206368504889e66a015f6a135a6a01580f0531ff6a3c58
+syscall
+syscall
+si
+patch 0x700000000ffe 0f05
+break 700000000ffd
+cont
+delete 2
+cont

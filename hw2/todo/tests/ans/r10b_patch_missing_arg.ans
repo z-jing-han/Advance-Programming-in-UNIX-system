@@ -1,0 +1,11 @@
+** program './rana' loaded. entry point: 0x401650.
+	0x401650: f3 0f 1e fa                     endbr64	
+	0x401654: 31 ed                           xor	ebp, ebp
+	0x401656: 49 89 d1                        mov	r9, rdx
+	0x401659: 5e                              pop	rsi
+	0x40165a: 48 89 e2                        mov	rdx, rsp
+(sdb) ** the target address is not valid.
+(sdb) matcha parfait
+matcha parfait
+matcha parfait
+** the target program terminated.

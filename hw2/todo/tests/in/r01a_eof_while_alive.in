@@ -1,0 +1,3 @@
+# R1a — input ends (EOF) while the target is still running
+@args ./hello
+si

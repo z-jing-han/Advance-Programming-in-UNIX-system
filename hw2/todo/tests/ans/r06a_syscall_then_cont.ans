@@ -1,0 +1,40 @@
+** program './mortis' loaded. entry point: 0x401070.
+	0x401070: f3 0f 1e fa                     endbr64	
+	0x401074: 31 ed                           xor	ebp, ebp
+	0x401076: 49 89 d1                        mov	r9, rdx
+	0x401079: 5e                              pop	rsi
+	0x40107a: 48 89 e2                        mov	rdx, rsp
+(sdb) ** set a breakpoint at 0x401210.
+(sdb) ** hit a breakpoint at 0x401210.
+	0x401210: 83 7d dc 04                     cmp	dword ptr [rbp - 0x24], 4
+	0x401214: 7e be                           jle	0x4011d4
+	0x401216: bf 00 00 00 00                  mov	edi, 0
+	0x40121b: e8 6a ff ff ff                  call	0x40118a
+	0x401220: b8 00 00 00 00                  mov	eax, 0
+(sdb) ** enter a syscall(1) at 0x7c487891e88b.
+	0x7c487891e88b: 0f 05                           syscall	
+	0x7c487891e88d: 48 3d 01 f0 ff ff               cmp	rax, -0xfff
+	0x7c487891e893: 73 01                           jae	0x7c487891e896
+	0x7c487891e895: c3                              ret	
+	0x7c487891e896: 48 8b 0d 73 b5 0f 00            mov	rcx, qword ptr [rip + 0xfb573]
+(sdb) I like cucumbers
+** hit a breakpoint at 0x401210.
+	0x401210: 83 7d dc 04                     cmp	dword ptr [rbp - 0x24], 4
+	0x401214: 7e be                           jle	0x4011d4
+	0x401216: bf 00 00 00 00                  mov	edi, 0
+	0x40121b: e8 6a ff ff ff                  call	0x40118a
+	0x401220: b8 00 00 00 00                  mov	eax, 0
+(sdb) ** enter a syscall(1) at 0x7c487891e88b.
+	0x7c487891e88b: 0f 05                           syscall	
+	0x7c487891e88d: 48 3d 01 f0 ff ff               cmp	rax, -0xfff
+	0x7c487891e893: 73 01                           jae	0x7c487891e896
+	0x7c487891e895: c3                              ret	
+	0x7c487891e896: 48 8b 0d 73 b5 0f 00            mov	rcx, qword ptr [rip + 0xfb573]
+(sdb) I like cucumbers
+** leave a syscall(1) = 17 at 0x7c487891e88b.
+	0x7c487891e88b: 0f 05                           syscall	
+	0x7c487891e88d: 48 3d 01 f0 ff ff               cmp	rax, -0xfff
+	0x7c487891e893: 73 01                           jae	0x7c487891e896
+	0x7c487891e895: c3                              ret	
+	0x7c487891e896: 48 8b 0d 73 b5 0f 00            mov	rcx, qword ptr [rip + 0xfb573]
+(sdb) 

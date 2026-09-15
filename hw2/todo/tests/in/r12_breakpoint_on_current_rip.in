@@ -1,0 +1,8 @@
+# R12 — setting a breakpoint on the address rip already sits at must not
+# re-report a hit on the next si/cont (protect this already-correct behavior)
+@args ./rana
+si
+break 401654
+si
+si
+cont

@@ -1,0 +1,9 @@
+# R7 — delete a breakpoint, then patch that same address;
+# disassembly must show the patched byte, not the deleted breakpoint's
+@args ./rana
+break 401798
+break 40179e
+cont
+delete 1
+patch 40179e 7f
+cont
