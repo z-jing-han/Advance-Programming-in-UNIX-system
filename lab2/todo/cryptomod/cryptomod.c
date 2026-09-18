@@ -34,6 +34,7 @@ struct cryptomod_data {
     struct CryptoSetup crypto_config;
     int device_setup;
     int finalize;
+    struct mutex fd_lock;
 };
 
 // From hellomod.c
@@ -61,6 +62,7 @@ static int cryptomod_dev_open(struct inode *i, struct file *f) {
     data->device_setup = 0;
     // data->finalize = 0;
     data->pid = current->pid;
+    mutex_init(&data->fd_lock);
     return 0;
 }
 
@@ -72,6 +74,7 @@ static int cryptomod_dev_close(struct inode *i, struct file *f) {
             kfree(data->kernel_buffer);
             data->kernel_buffer = NULL;
         }
+        mutex_destroy(&data->fd_lock);
         kfree(data);
         data = NULL;
     }
@@ -128,7 +131,7 @@ out:
     crypto_free_skcipher(tfm);
     skcipher_request_free(req);
     // race condition for multi-thread test case
-    kfree(data);
+    // kfree(data);
 
     return err;
 }
@@ -136,41 +139,59 @@ out:
 // write: write to kernel buffer
 static ssize_t cryptomod_dev_write(struct file *f, const char __user *buf, size_t len, loff_t *off) {
     struct cryptomod_data *data = f->private_data;
+    ssize_t err;
+    mutex_lock(&data->fd_lock);
+
     if (!data->device_setup || data->finalize) {
-        return -EINVAL;
+        err = -EINVAL;
+        goto write_err;
     }
     
     size_t process_bytes = min(len,  MAX_BUFFER_SIZE - data->cur_kernel_buffer_pos);
     if (process_bytes == 0) {
-        return -EAGAIN;
+        err = -EAGAIN;
+        goto write_err;
     }
 
     if (copy_from_user(data->kernel_buffer + data->cur_kernel_buffer_pos, buf, process_bytes)) {
-        return -EBUSY;
+        err = -EBUSY;
+        goto write_err;
     }
     
     data->cur_kernel_buffer_pos += process_bytes;
     mutex_lock(&global_lock);
     byte_write += process_bytes;
     mutex_unlock(&global_lock);
+
+    mutex_unlock(&data->fd_lock);
     return process_bytes;
+
+write_err:
+    mutex_unlock(&data->fd_lock);
+    return err;
 }
 
 // read and process (dec or enc):
 static ssize_t cryptomod_dev_read(struct file *f, char __user *buf, size_t len, loff_t *off) {
     struct cryptomod_data *data = f->private_data;
+    ssize_t err;
+    mutex_lock(&data->fd_lock);
+
     if (!data->device_setup) {
-        return -EINVAL;
+        err = -EINVAL;
+        goto read_err;
     }
 
     // keey at least a block in dev for padding
     size_t process_bytes = min(len - len % CM_BLOCK_SIZE, data->cur_kernel_buffer_pos - data->cur_kernel_buffer_pos % CM_BLOCK_SIZE);
-    if (data->crypto_config.io_mode == ADV && data->crypto_config.c_mode == DEC && !data->finalize && data->cur_kernel_buffer_pos - process_bytes < CM_BLOCK_SIZE) {
+    if (data->crypto_config.io_mode == ADV && data->crypto_config.c_mode == DEC && !data->finalize && data->cur_kernel_buffer_pos - process_bytes < CM_BLOCK_SIZE
+        && data->cur_kernel_buffer_pos - process_bytes < CM_BLOCK_SIZE) {
         process_bytes -= CM_BLOCK_SIZE;
     }
 
     if (process_bytes == 0 && !data->finalize) {
-        return -EAGAIN;
+        err = -EAGAIN;
+        goto read_err;
     }
 
     // since padding remove is after dec process, so process dec in ioctl finalize mode
@@ -187,7 +208,8 @@ static ssize_t cryptomod_dev_read(struct file *f, char __user *buf, size_t len, 
         }
     }
     if (copy_to_user(buf, data->kernel_buffer, process_bytes)) {
-        return -EBUSY;
+        err = -EBUSY;
+        goto read_err;
     }
 
     data->cur_kernel_buffer_pos -= process_bytes;
@@ -195,12 +217,20 @@ static ssize_t cryptomod_dev_read(struct file *f, char __user *buf, size_t len, 
     mutex_lock(&global_lock);
     byte_read += process_bytes;
     mutex_unlock(&global_lock);
+
+    mutex_unlock(&data->fd_lock);
     return process_bytes;
+
+read_err:
+    mutex_unlock(&data->fd_lock);
+    return err;
 }
 
 // ioctl
 static long cryptomod_dev_ioctl(struct file *fp, unsigned int cmd, unsigned long arg) {
     struct cryptomod_data *data = fp->private_data;
+    long ret = 0;
+    mutex_lock(&data->fd_lock);
 
     switch (cmd) {
     case CM_IOC_SETUP:
@@ -210,30 +240,38 @@ static long cryptomod_dev_ioctl(struct file *fp, unsigned int cmd, unsigned long
         
         // error handling
         if ((struct CryptoSetup *)arg == NULL) {
-            return -EINVAL;
+            ret = -EINVAL;
+            goto ioctl_ret; 
         }
 
         if (!data->kernel_buffer || copy_from_user(&(data->crypto_config), (struct CryptoSetup *)arg, sizeof(struct CryptoSetup))) {
-            return -EBUSY;
+            ret = -EBUSY;
+            goto ioctl_ret; 
         }
 
         if (data->crypto_config.key_len != 16 && data->crypto_config.key_len != 24 && data->crypto_config.key_len != 32) {
-            return -EINVAL;
+            ret = -EINVAL;
+            goto ioctl_ret; 
         }
         
         if (data->crypto_config.io_mode != BASIC && data->crypto_config.io_mode != ADV) {
-            return -EINVAL;
+            ret = -EINVAL;
+            goto ioctl_ret; 
         }
 
         if (data->crypto_config.c_mode != ENC && data->crypto_config.c_mode != DEC) {
-            return -EINVAL;
+            ret = -EINVAL;
+            goto ioctl_ret; 
         }
         
         memset(data->kernel_buffer, 0, MAX_BUFFER_SIZE);
-        return 0;
+        
+        ret = 0;
+        goto ioctl_ret; 
     case CM_IOC_FINALIZE:
         if (!data->device_setup) {
-            return -EINVAL;
+            ret = -EINVAL;
+            goto ioctl_ret; 
         }
         data->finalize = 1;
         // padding
@@ -249,49 +287,62 @@ static long cryptomod_dev_ioctl(struct file *fp, unsigned int cmd, unsigned long
                     data->kernel_buffer[data->cur_kernel_buffer_pos++] = CM_BLOCK_SIZE;
                 }
             }
-            return 0;
+            ret = 0;
+            goto ioctl_ret; 
         case DEC:
             if (data->cur_kernel_buffer_pos % CM_BLOCK_SIZE || data->cur_kernel_buffer_pos == 0) {
-                return -EINVAL;
+                ret = -EINVAL;
+                goto ioctl_ret; 
             }
             test_skcipher(data, data->cur_kernel_buffer_pos);
             unsigned char padding_value = data->kernel_buffer[data->cur_kernel_buffer_pos-1];
             if (padding_value == 0 || padding_value > CM_BLOCK_SIZE || padding_value > data->cur_kernel_buffer_pos) {
-                return -EINVAL;
+                ret = -EINVAL;
+                goto ioctl_ret; 
             }
 
             for (size_t i = 0; i < (size_t)padding_value; ++i) {
                 if (data->kernel_buffer[data->cur_kernel_buffer_pos - 1 - i] != padding_value) {
-                    return -EINVAL;
+                    ret = -EINVAL;
+                    goto ioctl_ret; 
                 }
             }
 
             data->cur_kernel_buffer_pos -= padding_value;
             data->kernel_buffer[data->cur_kernel_buffer_pos] = 0;
 
-            return 0;
+            ret = 0;
+            goto ioctl_ret; 
         default:
-            return 0;
+            ret = 0;
+            goto ioctl_ret; 
         }
     case CM_IOC_CLEANUP:
         if (!data->device_setup) {
-            return -EINVAL;
+            ret = -EINVAL;
+            goto ioctl_ret; 
         }
         data->cur_kernel_buffer_pos = 0;
         memset(data->kernel_buffer, 0, MAX_BUFFER_SIZE);
         data->finalize = 0;
-        return 0;
+        ret = 0;
+        goto ioctl_ret; 
     case CM_IOC_CNT_RST:
         mutex_lock(&global_lock);
         byte_read = 0;
         byte_write = 0;
         memset(byte_frequency_table, 0, sizeof(byte_frequency_table));
         mutex_unlock(&global_lock);
-
-        return 0;
+        ret = 0;
+        goto ioctl_ret; 
     default:
-        return -EINVAL;
+        ret = -EINVAL;
+        goto ioctl_ret; 
     }
+
+ioctl_ret:
+    mutex_unlock(&data->fd_lock);
+    return ret;
 }
 
 static const struct file_operations cryptomod_dev_fops = {
