@@ -20,3 +20,8 @@ Each folder contains two subdirectories: `spec/` and `todo/`.
 ## Environment
 
 Follow the lab1 Instruction (via docker)
+
+```bash
+ssh -p 22222 [hostname]@localhost
+```
+
