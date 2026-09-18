@@ -25,8 +25,8 @@
 #define BYTE_TABLE_SIZE 256
 
 static DEFINE_MUTEX(global_lock);
-// File descriptor: hint 7
 
+// File descriptor: hint 7
 struct cryptomod_data {
     pid_t pid;
     char* kernel_buffer;
@@ -128,7 +128,7 @@ out:
     crypto_free_skcipher(tfm);
     skcipher_request_free(req);
     // race condition for multi-thread test case
-    // kfree(data);
+    kfree(data);
 
     return err;
 }

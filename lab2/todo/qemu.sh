@@ -7,6 +7,10 @@ if [ "$1" = "debug" ]; then
 	APPEND="$APPEND nokaslr"
 fi
 
+if [ -n "$SLUB_DEBUG" ]; then
+	APPEND="$APPEND slub_debug=$SLUB_DEBUG"
+fi
+
 exec qemu-system-x86_64 \
   -smp 2 \
   -kernel ./dist/vmlinuz-* \

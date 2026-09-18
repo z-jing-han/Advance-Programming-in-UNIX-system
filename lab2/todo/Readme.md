@@ -18,7 +18,19 @@ sudo apt install qemu-system-x86 cpio
 
 Assume the module name is `cryptomod`
 
-### WSL
+### VMWare + Ubuntu
+
+```.bash
+cd todo/cryptomod
+cp ../../spec/Pre-Lab-Announcement/dist-6.6.17.tbz ./
+tar -xvf dist-6.6.17.tbz
+rm -f *.tbz
+chmod +x qemu.sh
+./archive_into_kernel.sh cryptomod/
+./qemu.sh
+```
+
+### WSL (No need, can follow the above one)
 Follow the later part of instruction in pre-lab, cross-complie is needed.
 
 First setting
@@ -59,18 +71,6 @@ exit
 ./qemu.sh
 ```
 
-### VMWare + Ubuntu
-
-```.bash
-cd todo/cryptomod
-cp ../../spec/Pre-Lab-Announcement/dist-6.6.17.tbz ./
-tar -xvf dist-6.6.17.tbz
-rm -f *.tbz
-chmod +x qemu.sh
-./archive_into_kernel.sh cryptomod/
-./qemu.sh
-```
-
 ## Goal
 
 The kernel module includes:
@@ -97,3 +97,12 @@ In this case, you must always keep one block in the buffer before receiving the 
 ||In theory, for side-channel issues with multi-threading, just locking everything with mutex should work. But in my case, if I don’t add `printk` at the beginning and end of a function, it causes multithreading issues—so there’s probably a bug||
 
 25/10/8: Fix the error of multi-thread test case and the kernel panic cause by large kernel buffer size (vi `kmalloc`) => use the `kfree()` care, care very carefully, please
+
+26/09/18: Trace the double kfree bug again, add debug flag
+```bash
+./qemu.sh
+./qemu.sh debug                    # gdb attach debugger
+SLUB_DEBUG=FZUP ./qemu.sh          # slub memory allocator
+SLUB_DEBUG=FZUP ./qemu.sh debug    # both
+```
+Result at `double-kfree.log`, search `multi_test` and call stack where can find `test_skcipher` function
